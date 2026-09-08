@@ -1,0 +1,798 @@
+/* =========================================================
+   ESTILOS GENERALES
+   ========================================================= */
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.main-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: #ffffff;
+
+    padding: 25px 0;
+    margin-bottom: 30px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    transition: all 0.3s ease;
+}
+
+.main-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 0;
+
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.main-header h1 i {
+    font-size: 2.2rem;
+}
+
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.main-navbar {
+    background: #ffffff;
+
+    margin: 0 15px 30px;
+    padding: 0 20px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+
+    transition: all 0.3s ease;
+}
+
+.main-navbar .container {
+    min-height: 64px;
+}
+
+.main-navbar .navbar-brand {
+    color: #2c3e50;
+
+    margin-right: 25px;
+
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.main-navbar .navbar-brand:hover {
+    color: #3498db;
+}
+
+.main-navbar .navbar-brand i {
+    margin-right: 7px;
+}
+
+.main-navbar .nav-link {
+    color: #2c3e50;
+
+    padding: 18px 15px;
+
+    border-radius: 6px;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+}
+
+.main-navbar .nav-link i {
+    margin-right: 6px;
+}
+
+.main-navbar .nav-link:hover {
+    background: #3498db;
+    color: #ffffff;
+}
+
+.main-navbar .navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    color: #59636e;
+    font-size: 0.9rem;
+}
+
+.main-navbar .navbar-user i {
+    margin-right: 5px;
+}
+
+.main-navbar .btn-logout {
+    color: #e74c3c;
+
+    padding: 7px 12px;
+
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+
+    font-size: 0.85rem;
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+.main-navbar .btn-logout:hover {
+    background: #e74c3c;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   BOTÓN MODO OSCURO
+   ========================================================= */
+
+.dark-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+}
+
+.dark-mode-toggle i {
+    font-size: 1rem;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.8);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL
+   ========================================================= */
+
+main {
+    background: #ffffff;
+
+    padding: 30px;
+    margin: 0 15px;
+
+    min-height: 500px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+
+    transition: all 0.3s ease;
+}
+
+main.container {
+    max-width: 1500px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   PÁGINAS CRUD
+   ========================================================= */
+
+.crud-page {
+    padding: 20px 0;
+}
+
+.crud-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+
+    border-bottom: 3px solid #3498db;
+}
+
+.crud-page h1 {
+    margin: 0;
+
+    color: #2c3e50;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   BOTONES CRUD
+   ========================================================= */
+
+.crud-page .btn {
+    padding: 9px 20px;
+
+    border: none;
+    border-radius: 5px;
+
+    color: #ffffff;
+
+    font-weight: 500;
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+.crud-page .btn-primary {
+    background: #3498db;
+}
+
+.crud-page .btn-primary:hover {
+    background: #2980b9;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+.crud-page .btn-secondary {
+    background: #7f8c8d;
+}
+
+.crud-page .btn-secondary:hover {
+    background: #626e70;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+
+.crud-page .data-table {
+    width: 100%;
+
+    background: transparent;
+
+    border-collapse: collapse;
+}
+
+.crud-page .data-table thead {
+    background: #34495e;
+    color: #ffffff;
+}
+
+.crud-page .data-table thead th {
+    padding: 12px 15px;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.crud-page .data-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.crud-page .data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.crud-page .data-table tbody td {
+    padding: 12px 15px;
+
+    border-bottom: 1px solid #e8ecf1;
+
+    color: #2c3e50;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   TEXTO SECUNDARIO
+   ========================================================= */
+
+.crud-page .text-muted {
+    padding: 30px 0;
+
+    color: #7f8c8d !important;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   FORMULARIOS CRUD
+   ========================================================= */
+
+.crud-form {
+    width: 100%;
+    max-width: 750px;
+
+    margin: 0 auto;
+}
+
+.crud-form .form-group {
+    margin-bottom: 24px;
+}
+
+.crud-form label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #2c3e50;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.crud-form label span {
+    margin-left: 5px;
+
+    color: #7f8c8d;
+
+    font-size: 0.85rem;
+    font-weight: normal;
+}
+
+.crud-form input,
+.crud-form textarea {
+    display: block;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d1d9e0;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #2c3e50;
+
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.crud-form input {
+    height: 46px;
+}
+
+.crud-form textarea {
+    min-height: 160px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ACCIONES DE TABLA
+   ========================================================= */
+
+.crud-page .actions {
+    white-space: nowrap;
+}
+
+.crud-page .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    margin-right: 5px;
+
+    border-radius: 5px;
+
+    font-size: 1rem;
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+.crud-page .btn-edit {
+    background: #ecf6fd;
+    color: #3498db;
+}
+
+.crud-page .btn-edit:hover {
+    background: #3498db;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+.crud-page .btn-delete {
+    background: #fdf0ef;
+    color: #e74c3c;
+}
+
+.crud-page .btn-delete:hover {
+    background: #e74c3c;
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+body.dark-mode {
+    background-color: #0a0a0f;
+    color: #e0e0e0;
+}
+
+
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+.dark-mode .main-header {
+    background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%);
+    border-bottom: 1px solid #2a2a4a;
+}
+
+.dark-mode .main-header h1 {
+    color: #f0f0ff;
+}
+
+
+/* ---------------------------------------------------------
+   Navbar
+   --------------------------------------------------------- */
+
+.dark-mode .main-navbar {
+    background: #14142a;
+
+    border: 1px solid #2a2a4a;
+
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .main-navbar .navbar-brand {
+    color: #f0f0ff;
+}
+
+.dark-mode .main-navbar .navbar-brand:hover {
+    color: #8f89ff;
+}
+
+.dark-mode .main-navbar .nav-link {
+    color: #c0c0e0;
+}
+
+.dark-mode .main-navbar .nav-link:hover {
+    background: #2a2a5a;
+    color: #ffffff;
+}
+
+.dark-mode .main-navbar .navbar-user {
+    color: #c0c0e0;
+}
+
+.dark-mode .main-navbar .btn-logout {
+    color: #ff8b82;
+    border-color: #c96b63;
+}
+
+.dark-mode .main-navbar .btn-logout:hover {
+    background: #e74c3c;
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   Botón modo oscuro
+   --------------------------------------------------------- */
+
+.dark-mode .dark-mode-toggle {
+    border-color: #6a6a8a;
+    color: #c0c0e0;
+}
+
+.dark-mode .dark-mode-toggle:hover {
+    background: rgba(108, 99, 255, 0.2);
+    border-color: #8f89ff;
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   Contenido principal
+   --------------------------------------------------------- */
+
+.dark-mode main {
+    background: #12121f;
+
+    border: 1px solid #25253f;
+
+    color: #e0e0f0;
+
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---------------------------------------------------------
+   CRUD
+   --------------------------------------------------------- */
+
+.dark-mode .crud-page h1 {
+    color: #f0f0ff;
+}
+
+.dark-mode .crud-page .page-header {
+    border-bottom-color: #5b54d6;
+}
+
+
+/* ---------------------------------------------------------
+   Formularios
+   --------------------------------------------------------- */
+
+.dark-mode .crud-form label {
+    color: #d0d0e8;
+}
+
+.dark-mode .crud-form label span {
+    color: #8888a8;
+}
+
+.dark-mode .crud-form input,
+.dark-mode .crud-form textarea {
+    background: #1a1a2e;
+    border-color: #3a3a5a;
+    color: #e0e0f0;
+}
+
+.dark-mode .crud-form input::placeholder,
+.dark-mode .crud-form textarea::placeholder {
+    color: #8888a8;
+}
+
+.dark-mode .crud-form input:focus,
+.dark-mode .crud-form textarea:focus {
+    background: #1e1e35;
+    border-color: #6c63ff;
+    color: #ffffff;
+
+    outline: none;
+
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+.dark-mode .crud-form input[type="date"] {
+    color-scheme: dark;
+}
+
+
+/* ---------------------------------------------------------
+   Botones CRUD
+   --------------------------------------------------------- */
+
+.dark-mode .crud-page .btn-primary {
+    background: #5b54d6;
+    color: #ffffff;
+}
+
+.dark-mode .crud-page .btn-primary:hover {
+    background: #4c46b8;
+    color: #ffffff;
+}
+
+.dark-mode .crud-page .btn-secondary {
+    background: #34344a;
+    color: #e0e0f0;
+}
+
+.dark-mode .crud-page .btn-secondary:hover {
+    background: #45455d;
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   Tablas
+   --------------------------------------------------------- */
+
+.dark-mode .crud-page .data-table thead {
+    background: #24243b;
+}
+
+.dark-mode .crud-page .data-table tbody td {
+    border-bottom-color: #2a2a40;
+    color: #d0d0e8;
+}
+
+.dark-mode .crud-page .data-table tbody tr:hover {
+    background: #1a1a2e;
+}
+
+.dark-mode .crud-page .text-muted {
+    color: #8888a8 !important;
+}
+
+
+/* ---------------------------------------------------------
+   Acciones de tabla
+   --------------------------------------------------------- */
+
+.dark-mode .crud-page .btn-edit {
+    background: #182a3d;
+    color: #7db8ff;
+}
+
+.dark-mode .crud-page .btn-edit:hover {
+    background: #3498db;
+    color: #ffffff;
+}
+
+.dark-mode .crud-page .btn-delete {
+    background: #3a2020;
+    color: #ff8b82;
+}
+
+.dark-mode .crud-page .btn-delete:hover {
+    background: #e74c3c;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .main-header {
+        padding: 18px 0;
+        margin-bottom: 20px;
+    }
+
+    .main-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .main-header h1 i {
+        font-size: 1.6rem;
+    }
+
+    .main-navbar {
+        margin: 0 5px 20px;
+        padding: 10px;
+    }
+
+    .main-navbar .nav-link {
+        padding: 10px 12px;
+    }
+
+    .main-navbar .navbar-user {
+        margin-top: 10px;
+        padding: 10px 5px;
+    }
+
+    main {
+        padding: 20px;
+        margin: 0 5px;
+    }
+
+    .crud-page {
+        padding: 10px 0;
+    }
+
+    .crud-page .page-header {
+        gap: 15px;
+    }
+}
+
+/* =========================================================
+   SELECTS
+   ========================================================= */
+
+.crud-form select {
+    display: block;
+    width: 100%;
+    height: 46px;
+    box-sizing: border-box;
+
+    padding: 0 40px 0 14px;
+
+    border: 1px solid #d1d9e0;
+    border-radius: 6px;
+
+    background-color: #ffffff;
+    color: #2c3e50;
+
+    font-family: inherit;
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    appearance: none;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 9.8 3.204 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+
+    transition: all 0.2s ease;
+}
+
+.crud-form select:hover {
+    border-color: #3498db;
+}
+
+.crud-form select:focus {
+    border-color: #3498db;
+    outline: none;
+
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+
+/* =========================================================
+   SELECT - DARK MODE
+   ========================================================= */
+
+.dark-mode .crud-form select {
+    background-color: #1a1a2e;
+    border-color: #3a3a5a;
+    color: #e0e0f0;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23aaaac0' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 9.8 3.204 5z'/%3E%3C/svg%3E");
+}
+
+.dark-mode .crud-form select:hover {
+    border-color: #6c63ff;
+}
+
+.dark-mode .crud-form select:focus {
+    background-color: #1e1e35;
+    border-color: #6c63ff;
+    color: #ffffff;
+
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}   
+

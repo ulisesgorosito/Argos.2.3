@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="/stylesheets/style.css">
+<div class="crud-page">
+
+<div class="page-header">
+    <h1>Nuevo Tipo de Registro</h1>
+
+    <a href="/registros" class="btn btn-secondary">
+        Volver
+    </a>
+</div>
+
+{{#if error}}
+    <div class="alert alert-danger">
+        {{message}}
+    </div>
+{{/if}}
+
+<form class="crud-form" action="/tiposRegistros/agregar" method="post">
+
+    <div class="form-group">
+        <label for="nombre">
+            Nombre
+        </label>
+
+        <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            placeholder="Ej: Libro"
+            required
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">
+            Descripción
+            <span>(opcional)</span>
+        </label>
+
+        <textarea
+            id="descripcion"
+            name="descripcion"
+            placeholder="Escribí una breve descripción..."
+        ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Agregar tipo de registro
+    </button>
+
+</form>
+
+</div>

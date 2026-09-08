@@ -1,0 +1,182 @@
+<link rel="stylesheet" href="/stylesheets/style.css">
+
+<div class="crud-page">
+
+    <div class="page-header">
+        <h1>Nuevo Registro</h1>
+
+        <div>
+            <a class="btn btn-primary" href="../tiposRegistros/agregar">
+                Nuevo Tipo de Registro
+            </a>
+
+            </a>
+            <a class="btn btn-primary" href="/autorias/agregar">
+                Nueva Autoría
+            </a>
+
+            <a href="/registros" class="btn btn-secondary">
+                Volver
+            </a>
+        </div>
+    </div>
+
+    {{#if error}}
+    <div class="alert alert-danger">
+        {{message}}
+    </div>
+    {{/if}}
+
+    <form class="crud-form" action="/registros/agregar" method="post">
+
+        <div class="form-group">
+            <label for="idTipoRegistro">
+                Tipo de Registro
+            </label>
+
+            <select id="idTipoRegistro" name="idTipoRegistro" required>
+                <option value="">Seleccionar tipo de registro</option>
+
+                {{#each tiposRegistros}}
+                <option value="{{id}}">
+                    {{nombre}}
+                </option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="titulo">
+                Título
+            </label>
+
+            <input type="text" id="titulo" name="titulo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="subtitulo">
+                Subtítulo
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="subtitulo" name="subtitulo">
+        </div>
+
+        <div class="form-group">
+            <label for="idAutoria">
+                Autoría
+            </label>
+
+            <select id="idAutoria" name="idAutoria" required>
+                <option value="">Seleccionar Autoría</option>
+
+                {{#each autorias}}
+                <option value="{{id}}">
+                    {{apellido}}, {{nombre}}
+                </option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fechaPublicacion">
+                Fecha de publicación
+            </label>
+
+            <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
+        </div>
+
+        <div class="form-group">
+            <label for="editorial">
+                Editorial o revista
+            </label>
+
+            <input type="text" id="editorial" name="editorial" required>
+        </div>
+
+        <div class="form-group">
+            <label for="paginas">
+                Páginas
+            </label>
+
+            <input type="text" id="paginas" name="paginas" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lugar">
+                Lugar
+            </label>
+
+            <input type="text" id="lugar" name="lugar" required>
+        </div>
+
+        <div class="form-group">
+            <label for="volumen">
+                Volumen
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="volumen" name="volumen">
+        </div>
+
+        <div class="form-group">
+            <label for="numero">
+                Número
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="numero" name="numero">
+        </div>
+
+        <div class="form-group">
+            <label for="edicion">
+                Edición
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="edicion" name="edicion">
+        </div>
+
+        <div class="form-group">
+            <label for="idioma">
+                Idioma
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="idioma" name="idioma">
+        </div>
+
+        <div class="form-group">
+            <label for="url">
+                URL
+                <span>(opcional)</span>
+            </label>
+
+            <input type="url" id="url" name="url">
+        </div>
+
+        <div class="form-group">
+            <label for="codigo">
+                Código
+                <span>(opcional)</span>
+            </label>
+
+            <input type="text" id="codigo" name="codigo">
+        </div>
+
+        <div class="form-group">
+            <label for="observacion">
+                Observación
+                <span>(opcional)</span>
+            </label>
+
+            <textarea id="observacion" name="observacion"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Agregar registro
+        </button>
+
+    </form>
+
+</div>
