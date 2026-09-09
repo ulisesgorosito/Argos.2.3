@@ -1,3 +1,4 @@
+import {apiFetch} from "../helpers/apiHelper";
 import { Tabla } from "@/components/Tabla";
 
 const columns = [
@@ -13,21 +14,14 @@ const columns = [
 
 export default async function TemasPage() {
 
-    const response = await fetch(
-        `${process.env.API_BASE_URL}/temas`,
-        {
-            cache: "no-store"
-        }
-    );
-
-    const temas = await response.json();
+    const temas = await apiFetch("/temas", {
+        cache: "no-store"
+    });
 
     return (
         <div className="crud-page">
-
             <div className="page-header">
                 <h1>Temas</h1>
-
                 <a
                     className="btn btn-primary"
                     href="/temas/agregar"
@@ -39,8 +33,9 @@ export default async function TemasPage() {
             <Tabla
                 data={temas}
                 columns={columns}
+                editPath="/temas/editar"
+                deletePath="/temas/eliminar"
             />
-
         </div>
     );
 }

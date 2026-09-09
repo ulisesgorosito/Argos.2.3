@@ -1,25 +1,32 @@
 export default function Home() {
-  return (
-    <main className="home">
-      <h1>Bienvenido a Cuervo Biblioteca</h1>
+    return (
+        <div className="home">
+            <h1>Argos</h1>
 
-      <p>
-        En esta aplicación podrás gestionar tu biblioteca personal de forma
-        sencilla.
-      </p>
+            <p>
+                El búho de minerva es una aplicación destinada a organizar,
+                catalogar e inventariar lecturas, tanto literarias como
+                académicas y de investigación.
+            </p>
 
-      <h2>¿Qué podés hacer?</h2>
+            <p>
+                El proyecto surge de la necesidad de gestionar grandes
+                cantidades de material específico —libros, papers, ensayos y
+                artículos— y facilitar su posterior consulta y utilización
+                en trabajos académicos.
+            </p>
 
-      <ul>
-        <li>📚 Registrar nuevos libros.</li>
-        <li>📖 Consultar tu lista de lecturas.</li>
-        <li>✏️ Editar la información de un libro.</li>
-        <li>🗑️ Eliminar libros de tu colección.</li>
-      </ul>
+            <p>
+                La aplicación permite registrar materiales, asociarlos con
+                sus autores y clasificarlos por tipos, temas y listas de
+                lectura.
+            </p>
 
-      <p>
-        Utilizá el menú de navegación para comenzar.
-      </p>
-    </main>
-  );
+            <p>
+                <strong>
+                    Organizá tu biblioteca y tus listas de lecturas.
+                </strong>
+            </p>
+        </div>
+    );
 }

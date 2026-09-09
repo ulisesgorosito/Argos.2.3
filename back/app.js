@@ -59,7 +59,10 @@ app.use('/temas', secure, temasRouter);
 app.use('/registros', secure, registrosRouter);
 app.use('/tiposRegistros', secure, tiposRegistrosRouter);
 app.use('/autorias', secure, autoriasRouter);
-app.use('/api', cors(), apiRouter);
+app.use('/api', cors({
+  origin: 'http://localhost:3001',
+  credentials: true
+}), apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
