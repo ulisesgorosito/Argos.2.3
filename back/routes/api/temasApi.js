@@ -12,7 +12,8 @@ const router = express.Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        const temas = await getTemas();
+        const idUsuario = req.session.id_usuario;
+        const temas = await getTemas(idUsuario);
         res.json(temas);
     } catch (error) {
         next(error);

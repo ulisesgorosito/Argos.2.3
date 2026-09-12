@@ -1,9 +1,9 @@
 import pool from './bd.js';
 
-export async function getTemas() {
+export async function getTemas(idUsuario) {
     try {
-        const query = "SELECT * FROM temas ";
-        const [rows] = await pool.query(query);
+        const query = "SELECT * FROM temas WHERE idUsuario = ?";
+        const [rows] = await pool.query(query, [idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);

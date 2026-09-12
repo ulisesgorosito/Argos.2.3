@@ -13,9 +13,6 @@ export default function Login() {
         event.preventDefault();
 
         setError("");
-
-        debugger;
-        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`;
         try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/login`,

@@ -14,13 +14,11 @@ router.post('/', async function (req, res, next) {
     try {
         const { usuario, password } = req.body;
         const user = await usuariosModel.getUser(usuario, password);
-
-        console.log('USER:', user);
-
+          console.log("USUARIO ANTES DE SESION:", user);
         if (user) {
             req.session.id_usuario = user.id;
             req.session.user_name = user.userName;
-
+            console.log("SESIÓN ANTES DE GUARDAR:", req.session);
             req.session.save((err) => {
                 if (err) {
                     console.error('Error guardando sesión:', err);

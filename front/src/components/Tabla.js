@@ -1,12 +1,11 @@
-import Link from "next/link";
+"use client";
 
 export function Tabla({
     data,
     columns,
-    editPath,
-    deletePath
+    onEdit,
+    onDelete
 }) {
-
     return (
         <table className="data-table">
             <thead>
@@ -40,21 +39,23 @@ export function Tabla({
                             ))}
 
                             <td className="actions">
-                                <Link
-                                    href={`${editPath}/${row.id}`}
+                                <button
+                                    type="button"
                                     className="btn-action btn-edit"
                                     title="Editar"
+                                    onClick={() => onEdit(row)}
                                 >
                                     <i className="bi bi-pencil"></i>
-                                </Link>
+                                </button>
 
-                                <Link
-                                    href={`${deletePath}/${row.id}`}
+                                <button
+                                    type="button"
                                     className="btn-action btn-delete"
                                     title="Eliminar"
+                                    onClick={() => onDelete(row)}
                                 >
                                     <i className="bi bi-trash"></i>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     ))

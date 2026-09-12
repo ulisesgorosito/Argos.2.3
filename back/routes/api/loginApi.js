@@ -2,7 +2,7 @@ const express = require('express');
 
 const { getUser } = require('../../models/usuariosModels');
 const router = express.Router();
-console.log('LOGIN API CARGADO');
+
 router.post('/login', async (req, res) => {
 
     try {
@@ -10,7 +10,7 @@ router.post('/login', async (req, res) => {
         const { usuario, password } = req.body;
 
         const user = await getUser(usuario, password);
-
+        console.log("USER DEVUELTO POR getUser:", user);
         if (!user) {
             return res.status(401).json({
                 error: 'Usuario o contraseña incorrectos'
@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
         }
 
         req.session.id_usuario = user.id;
-
+        req.session.user_name = user.userName;
         return res.json({
             usuario: user.userName
         });
@@ -33,6 +33,21 @@ router.post('/login', async (req, res) => {
 
     }
 
+});
+
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({
+                error: 'Error cerrando sesión'
+            });
+        }
+
+        res.clearCookie('connect.sid');
+        res.status(200).json({
+            message: 'Sesión cerrada'
+        });
+    });
 });
 
 module.exports = router;

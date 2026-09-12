@@ -4,17 +4,38 @@ import "./globals.css";
 
 import Nav from "@/components/Nav";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import LogoutButton from "@/components/LogoutButton";
+import { cookies } from "next/headers";
 
-export const metadata = {
-    title: "Cuervo Biblioteca",
-    description: "Aplicación para gestionar una biblioteca personal",
-};
+export default async function RootLayout({ children }) {
+    const cookieStore = await cookies();
+    let user = null;
 
-export default function RootLayout({ children }) {
+    try {
+        const response = await fetch(
+            `${process.env.API_BASE_URL}/auth/me`,
+            {
+                headers: {
+                    Cookie: cookieStore.toString()
+                },
+                cache: "no-store"
+            }
+        );
+
+        if (response.ok) {
+            user = await response.json();
+            console.log(user);
+        }
+        else {
+            console.error("Error verificando sesión:", response.status, response.statusText, response);
+        }
+    } catch (error) {
+        console.error("Error verificando sesión:", error);
+    }
+
     return (
         <html lang="es">
             <body>
-
                 <header className="main-header">
                     <div className="container d-flex justify-content-between align-items-center">
                         <h1>
@@ -22,11 +43,32 @@ export default function RootLayout({ children }) {
                             Cuervo Biblioteca
                         </h1>
 
-                        <DarkModeToggle />
+                        <div>
+                            {user ? (
+                                <>
+                                    <span className="me-3">
+                                        <i className="bi bi-person-circle"></i>{" "}
+                                        {user.userName}
+                                    </span>
+
+                                    <LogoutButton />
+                                </>
+                            ) : (
+                                <a
+                                    href="/admin/login"
+                                    className="btn-login"
+                                >
+                                    <i className="bi bi-box-arrow-in-right"></i>{" "}
+                                    Iniciar sesión
+                                </a>
+                            )}
+
+                            <DarkModeToggle />
+                        </div>
                     </div>
                 </header>
 
-                <Nav />
+                {user && <Nav />}
 
                 <main className="container">
                     {children}
@@ -35,7 +77,6 @@ export default function RootLayout({ children }) {
                 <footer>
                     ESTO ES UN FOOTER
                 </footer>
-
             </body>
         </html>
     );
