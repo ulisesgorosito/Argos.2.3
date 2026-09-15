@@ -4,7 +4,8 @@ export function Tabla({
     data,
     columns,
     onEdit,
-    onDelete
+    onDelete,
+    canModify
 }) {
     return (
         <table className="data-table">
@@ -18,7 +19,6 @@ export function Tabla({
                     <th>Acciones</th>
                 </tr>
             </thead>
-
             <tbody>
                 {data.length === 0 ? (
                     <tr>
@@ -37,25 +37,27 @@ export function Tabla({
                                     {row[column.key]}
                                 </td>
                             ))}
-
                             <td className="actions">
-                                <button
-                                    type="button"
-                                    className="btn-action btn-edit"
-                                    title="Editar"
-                                    onClick={() => onEdit(row)}
-                                >
-                                    <i className="bi bi-pencil"></i>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="btn-action btn-delete"
-                                    title="Eliminar"
-                                    onClick={() => onDelete(row)}
-                                >
-                                    <i className="bi bi-trash"></i>
-                                </button>
+                                {(!canModify || canModify(row)) && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className="btn-action btn-edit"
+                                            title="Editar"
+                                            onClick={() => onEdit(row)}
+                                        >
+                                            <i className="bi bi-pencil"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn-action btn-delete"
+                                            title="Eliminar"
+                                            onClick={() => onDelete(row)}
+                                        >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
+                                    </>
+                                )}
                             </td>
                         </tr>
                     ))

@@ -1,22 +1,24 @@
 import pool from './bd.js';
 
-export async function getAutorias() {
+export async function getAutorias(idUsuario) {
     try {
-        const query = "SELECT * FROM autorias ";
-        const [rows] = await pool.query(query);
+        const query = "SELECT * FROM autorias WHERE idUsuario = ?";
+        const [rows] = await pool.query(query, [idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 
-export async function getAutoriaById(idAutoria) {
+export async function getAutoriaById(idAutoria, idUsuario) {
     try {
-        const query = "SELECT * FROM autorias WHERE id = ?";
-        const [rows] = await pool.query(query, [idAutoria]);
+        const query = "SELECT * FROM autorias WHERE id = ? AND idUsuario = ?";
+        const [rows] = await pool.query(query, [idAutoria, idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 export async function insertAutoria(obj, idUsuario) {
@@ -33,10 +35,12 @@ export async function insertAutoria(obj, idUsuario) {
     }
 }
 
-export async function updateAutoria(obj, idAutoria) {
+export async function updateAutoria(obj, idAutoria, idUsuario) {
     try {
-        var query = "UPDATE autorias SET ? WHERE id = ?";
-        var [rows] = await pool.query(query, [obj, idAutoria]);
+        var query = "UPDATE autorias SET ? WHERE id = ? AND idUsuario = ?";
+        console.log(idUsuario);
+        console.log(obj);
+        var [rows] = await pool.query(query, [obj, idAutoria, idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);

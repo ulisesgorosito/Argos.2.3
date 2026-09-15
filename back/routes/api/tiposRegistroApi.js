@@ -1,11 +1,6 @@
 const express = require('express');
 
-const {
-    getAutorias,
-    insertAutoria,
-    updateAutoria,
-    deleteAutoriaById
-} = require('../../models/autoriasModel');
+const { getTiposRegistros, insertTipoRegistro, updateTipoRegistro, deleteTipoRegistroById } = require('../../models/tiposRegistrosModel');
 
 const router = express.Router();
 
@@ -13,9 +8,9 @@ router.get('/', async function (req, res, next) {
     try {
         const idUsuario = req.session.id_usuario;
 
-        const autorias = await getAutorias(idUsuario);
+        const data = await getTiposRegistros(idUsuario);
 
-        res.json(autorias);
+        res.json(data);
     }
     catch (error) {
         console.log(error);
@@ -25,17 +20,9 @@ router.get('/', async function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
     try {
-        const obj = req.body;
-
-        if (obj.fecha_nacimiento === '')
-            obj.fecha_nacimiento = null;
-
-        if (obj.fecha_muerte === '')
-            obj.fecha_muerte = null;
-
         const idUsuario = req.session.id_usuario;
 
-        const result = await insertAutoria(obj, idUsuario);
+        const result = await insertTipoRegistro(req.body, idUsuario);
 
         res.status(201).json(result);
     }
@@ -47,19 +34,10 @@ router.post('/', async function (req, res, next) {
 
 router.put('/:id', async function (req, res, next) {
     try {
-        console.log("ENTRO AL PUT AUTORIAS");
-        const obj = req.body;
-
-        if (obj.fecha_nacimiento === '')
-            obj.fecha_nacimiento = null;
-
-        if (obj.fecha_muerte === '')
-            obj.fecha_muerte = null;
-
         const idUsuario = req.session.id_usuario;
         const id = req.params.id;
 
-        const result = await updateAutoria(obj, id, idUsuario);
+        const result = await updateTipoRegistro(req.body, id, idUsuario);
 
         res.status(201).json(result);
     }
@@ -71,10 +49,9 @@ router.put('/:id', async function (req, res, next) {
 
 router.delete('/:id', async function (req, res, next) {
     try {
-        console.log("ENTRO AL DELETE AUTORIAS");
         const id = req.params.id;
 
-        const result = await deleteAutoriaById(id);
+        const result = await deleteTipoRegistroById(id);
 
         res.status(201).json(result);
     }

@@ -2,6 +2,8 @@ const express = require('express');
 
 const temasApi = require('./temasApi');
 const autoriasApi = require('./autoriasApi');
+const tiposRegistroApi = require('./tiposRegistroApi');
+
 const loginApi = require('./loginApi');
 const secure = require('./secure');
 
@@ -24,5 +26,6 @@ router.get('/auth/me', (req, res) => {
 
 router.use('/temas', secure, temasApi);
 router.use('/autorias', secure, autoriasApi);
+router.use('/tiposRegistro', secure, tiposRegistroApi);
 
 module.exports = router;

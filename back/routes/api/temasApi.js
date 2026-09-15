@@ -22,7 +22,8 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
     try {
-        const tema = await getTemaById(req.params.id);
+        const idUsuario = req.session.id_usuario;
+        const tema = await getTemaById(req.params.id, idUsuario);
         res.json(tema[0]);
     } catch (error) {
         next(error);

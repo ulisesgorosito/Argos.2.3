@@ -10,10 +10,10 @@ export async function getTemas(idUsuario) {
     }
 }
 
-export async function getTemaById(idTema) {
+export async function getTemaById(idTema, idUsuario) {
     try {
-        const query = "SELECT * FROM temas WHERE id = ?";
-        const [rows] = await pool.query(query, [idTema]);
+        const query = "SELECT * FROM temas WHERE id = ? AND idUsuario = ? ";
+        const [rows] = await pool.query(query, [idTema, idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);

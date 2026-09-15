@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Tabla } from "@/components/Tabla";
 import TemaModal from "@/components/temas/TemaModal";
-
-import {
-    obtenerTemas,
-    eliminarTema
-} from "@/services/temasService";
+import { obtener, eliminar } from "@/services/apiService";
 
 const columns = [
     {
@@ -28,7 +24,7 @@ export function TemasClient() {
 
     const cargarTemas = async () => {
         try {
-            const temas = await obtenerTemas();
+            const temas = await obtener("/temas");
             setTemas(temas);
         } catch (error) {
             console.error(error);
@@ -55,7 +51,7 @@ export function TemasClient() {
 
     const handleEliminar = async (tema) => {
         try {
-            await eliminarTema(tema.id);
+            await eliminar(`/temas/${tema.id}`);
             await cargarTemas();
         } catch (error) {
             console.error(error);

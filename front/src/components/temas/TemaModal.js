@@ -1,8 +1,9 @@
 "use client";
 
+import { guardarRequest } from "@/services/apiService";
 import { useEffect, useState } from "react";
 
-export default function TemaModal({ tema, onClose, onSave}) {
+export default function TemaModal({ tema, onClose, onSave }) {
     const [nombre, setNombre] = useState("");
     const [descripcion, setDescripcion] = useState("");
 
@@ -18,29 +19,20 @@ export default function TemaModal({ tema, onClose, onSave}) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/temas${tema ? `/${tema.id}` : ""}`,
+debugger;
+        await guardarRequest(
+            `/temas${tema ? `/${tema.id}` : ""} `,
             {
-                method: tema ? "PUT" : "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    nombre,
-                    descripcion
-                })
-            }
+                nombre,
+                descripcion
+            },
+            tema ? "PUT" : "POST"
         );
-
-        if (!response.ok) {
-            return;
-        }
 
         onSave();
         onClose();
     };
+
 
     return (
         <div className="modal-backdrop">
