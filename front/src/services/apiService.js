@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 export async function apiFetch(path, options = {}) {
     try {
         const cookieStore = await cookies();
+        console.log(`ruta: ${process.env.API_BASE_URL}${path}`);
         const response = await fetch(
             `${process.env.API_BASE_URL}${path}`,
             {
@@ -21,7 +22,6 @@ export async function apiFetch(path, options = {}) {
         if (response.status === 301 || response.status === 302) {
             redirect("/admin/login");
         }
-        console.log(response);
 
         if (!response.ok) {
             console.log(response);

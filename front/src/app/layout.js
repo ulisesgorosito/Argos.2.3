@@ -70,7 +70,7 @@ export default async function RootLayout({ children }) {
 
                 {user && <Nav />}
 
-                <main className="container">
+                <main>
                     {children}
                 </main>
 
