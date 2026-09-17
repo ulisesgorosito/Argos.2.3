@@ -5,15 +5,36 @@ import { Tabla } from "@/components/Tabla";
 import { obtener, eliminar } from "@/services/apiService";
 import AutoriaModal from "../autorias/AutoriaModal";
 import RegistroModal from "../registros/RegistroModal";
+import { extraerAnio } from "@/utils/dateUtil";
 
 const columnsRegistros = [
     {
-        key: "nombre",
-        title: "Nombre"
+        key: "titulo",
+        title: "Titulo"
     },
     {
-        key: "descripcion",
-        title: "Descripción"
+        key: "subtitulo",
+        title: "Subtitulo"
+    },
+    {
+        key: "fechaPublicacionOriginal",
+        title: "Año publicación",
+        render: fecha => extraerAnio(fecha)
+    },
+    {
+        key: "fechaEdicion",
+        title: "Año Edición",
+        render: fecha => extraerAnio(fecha)
+    },
+    {
+        key: "autorias",
+        title: "Autoría",
+        render: autorias => autorias.map(autoria => autoria.apellido).join(", ")
+    },
+    {
+        key: "temas",
+        title: "Tema",
+        render: temas => temas.map(tema => tema.nombre).join(", ")
     }
 ];
 
@@ -53,6 +74,7 @@ export function RegistrosClient() {
     const cargarRegistros = async () => {
         try {
             const registros = await obtener("/registros");
+            console.log("REGISTROS:", registros);
             setRegistros(registros);
         } catch (error) {
             console.error(error);

@@ -1,13 +1,13 @@
 const express = require('express');
-const { getRegistros, getRegistroById, updateRegistro, deleteRegistroById } = require('../../models/registrosModel');
-const { nuevoRegistro } = require('../../services/registroService');
+const { deleteRegistroById } = require('../../models/registrosModel');
+const { nuevoRegistro, actualizarRegistro, obtenerRegistros, obtenerRegistro } = require('../../services/registroService');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const response = await getRegistros(idUsuario);
+        const response = await obtenerRegistros(idUsuario);
         res.json(response);
     } catch (error) {
         next(error);
@@ -17,8 +17,8 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const response = await getRegistroById(req.params.id, idUsuario);
-        res.json(response[0]);
+        const response = await obtenerRegistro(req.params.id, idUsuario);
+        res.json(response);
     } catch (error) {
         next(error);
     }
@@ -38,7 +38,7 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        await updateRegistro(req.body, req.params.id, idUsuario);
+        await actualizarRegistro(req.body, req.params.id, idUsuario);
 
         res.json({ message: 'Registro actualizado correctamente' });
     } catch (error) {

@@ -34,7 +34,9 @@ export function Tabla({
                         <tr key={row.id}>
                             {columns.map((column) => (
                                 <td key={column.key}>
-                                    {row[column.key]}
+                                    {column.render
+                                        ? column.render(row[column.key])
+                                        : row[column.key]}
                                 </td>
                             ))}
                             <td className="actions">

@@ -10,7 +10,6 @@ router.post('/login', async (req, res) => {
         const { usuario, password } = req.body;
 
         const user = await getUser(usuario, password);
-        console.log("USER DEVUELTO POR getUser:", user);
         if (!user) {
             return res.status(401).json({
                 error: 'Usuario o contraseña incorrectos'

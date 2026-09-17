@@ -18,7 +18,6 @@ export async function apiFetch(path, options = {}) {
                 redirect: "manual"
             }
         );
-
         if (response.status === 301 || response.status === 302) {
             redirect("/admin/login");
         }
@@ -27,6 +26,7 @@ export async function apiFetch(path, options = {}) {
             console.log(response);
             throw new Error(`Error HTTP ${response.status}`);
         }
+
         return response.json();
     } catch (error) {
         console.error("Error en apiFetch:", error);

@@ -1,6 +1,7 @@
 "use client";
 
 import { guardarRequest, obtener } from "@/services/apiService";
+import { extraerAnio } from "@/utils/dateUtil";
 import { useEffect, useState } from "react";
 
 export default function RegistroModal({ registro, onClose, onSave }) {
@@ -28,7 +29,7 @@ export default function RegistroModal({ registro, onClose, onSave }) {
     const [observacion, setObservacion] = useState("");
 
     useEffect(() => {
-        async function cargarDatos() {
+        async function cargarTodo() {
             const [tipos, autorias, temas] = await Promise.all([
                 obtener("/tiposRegistro"),
                 obtener("/autorias"),
@@ -38,60 +39,61 @@ export default function RegistroModal({ registro, onClose, onSave }) {
             setTiposRegistro(tipos);
             setAutorias(autorias);
             setTemas(temas);
+
+            if (registro) {
+                const registroCompleto = await obtener(`/registros/${registro.id}`);
+
+                setIdTipoRegistro(registroCompleto.idTipoRegistro || "");
+
+                setIdsAutoria(
+                    (registroCompleto.autorias || []).map((a) =>
+                        typeof a === "string" ? a : a.id
+                    )
+                );
+                setIdsTema(
+                    (registroCompleto.temas || []).map((t) =>
+                        typeof t === "string" ? t : t.id
+                    )
+                );
+
+                setTitulo(registroCompleto.titulo || "");
+                setSubtitulo(registroCompleto.subtitulo || "");
+                setAnioPublicacionOriginal(
+                    extraerAnio(registroCompleto.fechaPublicacionOriginal)
+                );
+                setAnioEdicion(extraerAnio(registroCompleto.fechaEdicion));
+                setEditorialRevista(registroCompleto.editorialRevista || "");
+                setPaginas(registroCompleto.paginas || "");
+                setLugar(registroCompleto.lugar || "");
+                setVolumen(registroCompleto.volumen || "");
+                setNumero(registroCompleto.numero || "");
+                setEdicion(registroCompleto.edicion || "");
+                setIdioma(registroCompleto.idioma || "");
+                setUrl(registroCompleto.url || "");
+                setCodigo(registroCompleto.codigo || "");
+                setObservacion(registroCompleto.observacion || "");
+            } else {
+                setIdTipoRegistro("");
+                setIdsAutoria([]);
+                setIdsTema([]);
+                setTitulo("");
+                setSubtitulo("");
+                setAnioPublicacionOriginal("");
+                setAnioEdicion("");
+                setEditorialRevista("");
+                setPaginas("");
+                setLugar("");
+                setVolumen("");
+                setNumero("");
+                setEdicion("");
+                setIdioma("");
+                setUrl("");
+                setCodigo("");
+                setObservacion("");
+            }
         }
 
-        cargarDatos();
-    }, []);
-
-    // Extrae solo el año de un string tipo "2020-05-14" o "2020"
-    const extraerAnio = (valor) => {
-        if (!valor) return "";
-
-        const match = String(valor).match(/\d{4}/);
-        return match ? match[0] : "";
-    };
-
-    useEffect(() => {
-        if (registro) {
-            setIdTipoRegistro(registro.idTipoRegistro || "");
-            setIdsAutoria(registro.idsAutoria || []);
-            setIdsTema(registro.idsTema || []);
-
-            setTitulo(registro.titulo || "");
-            setSubtitulo(registro.subtitulo || "");
-            setAnioPublicacionOriginal(
-                extraerAnio(registro.fechaPublicacionOriginal)
-            );
-            setAnioEdicion(extraerAnio(registro.fechaEdicion));
-            setEditorialRevista(registro.editorialRevista || "");
-            setPaginas(registro.paginas || "");
-            setLugar(registro.lugar || "");
-            setVolumen(registro.volumen || "");
-            setNumero(registro.numero || "");
-            setEdicion(registro.edicion || "");
-            setIdioma(registro.idioma || "");
-            setUrl(registro.url || "");
-            setCodigo(registro.codigo || "");
-            setObservacion(registro.observacion || "");
-        } else {
-            setIdTipoRegistro("");
-            setIdsAutoria([]);
-            setIdsTema([]);
-            setTitulo("");
-            setSubtitulo("");
-            setAnioPublicacionOriginal("");
-            setAnioEdicion("");
-            setEditorialRevista("");
-            setPaginas("");
-            setLugar("");
-            setVolumen("");
-            setNumero("");
-            setEdicion("");
-            setIdioma("");
-            setUrl("");
-            setCodigo("");
-            setObservacion("");
-        }
+        cargarTodo();
     }, [registro]);
 
     const agregarAutoria = (event) => {
