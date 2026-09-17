@@ -1,6 +1,6 @@
-import { RegistrosClient } from "@/components/clients/RegistrosClient";
+import { RegistrosClient } from "@/clients/RegistrosClient";
 
-export default function TemasPage() {
+export default function RegistrosPage() {
     return (
         <div className="crud-page">
             <RegistrosClient />

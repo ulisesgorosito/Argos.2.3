@@ -28,7 +28,7 @@ export default function Nav() {
                     </li>
 
                     <li className="nav-item">
-                        <Link className="nav-link" href="/listasdelectura">
+                        <Link className="nav-link" href="/listas">
                             <i className="bi bi-bookmarks"></i>
                             Listas de lectura
                         </Link>

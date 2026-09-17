@@ -4,6 +4,7 @@ const temasApi = require('./temasApi');
 const autoriasApi = require('./autoriasApi');
 const tiposRegistroApi = require('./tiposRegistroApi');
 const registrosApi = require('./registrosApi');
+const listasApi = require('./listasApi');
 
 const loginApi = require('./loginApi');
 const secure = require('./secure');
@@ -29,5 +30,6 @@ router.use('/temas', secure, temasApi);
 router.use('/autorias', secure, autoriasApi);
 router.use('/tiposRegistro', secure, tiposRegistroApi);
 router.use('/registros', secure, registrosApi);
+router.use('/listas', secure, listasApi);
 
 module.exports = router;

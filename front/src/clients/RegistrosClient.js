@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { Tabla } from "@/components/Tabla";
 import { obtener, eliminar } from "@/services/apiService";
-import AutoriaModal from "../autorias/AutoriaModal";
-import RegistroModal from "../registros/RegistroModal";
+import AutoriaModal from "../components/autorias/AutoriaModal";
+import RegistroModal from "../components/registros/RegistroModal";
 import { extraerAnio } from "@/utils/dateUtil";
 
 const columnsRegistros = [

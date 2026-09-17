@@ -1,4 +1,4 @@
-import { TemasClient } from "@/components/clients/TemasClient";
+import { TemasClient } from "@/clients/TemasClient";
 
 export default function TemasPage() {
     return (
