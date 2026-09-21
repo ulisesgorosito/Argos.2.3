@@ -125,12 +125,11 @@ export function RegistrosClient() {
 
     const handleEliminar = async (elemento) => {
         try {
-            debugger;
             if (seccion === "registros") {
                 await eliminar(`/registros/${elemento.id} `);
                 await cargarRegistros();
             } else if (seccion === "tipos") {
-                await eliminar(`/tiposRegistros/${elemento.id} `);
+                await eliminar(`/tiposRegistro/${elemento.id} `);
                 await cargarTiposRegistros();
             } else {
                 await eliminar(`/autorias/${elemento.id} `);

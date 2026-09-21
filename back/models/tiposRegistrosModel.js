@@ -35,10 +35,10 @@ export async function updateTipoRegistro(obj, idTipoRegistro, idUsuario) {
     }
 }
 
-export async function deleteTipoRegistroById(idTipoRegistro) {
-    var query = "delete from autorias where id = ? "
+export async function deleteTipoRegistroById(idTipoRegistro, idUsuario) {
+    var query = "delete from tipos_registros where id = ? AND idUsuario = ? "
     try {
-        var [rows] = await pool.query(query, [idTipoRegistro])
+        var [rows] = await pool.query(query, [idTipoRegistro, idUsuario])
         return rows;
     }
     catch (error) {

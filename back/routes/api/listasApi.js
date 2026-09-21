@@ -1,5 +1,5 @@
 const express = require('express');
-const { obtenerListas, obtenerLista, nuevaLista, actualizarLista, borrarLista, actualizarRegistrosLista } = require('../../services/listaService');
+const { obtenerListas, obtenerRegistrosDeLista, nuevaLista, actualizarLista, borrarLista, actualizarRegistrosLista } = require('../../services/listaService');
 
 const router = express.Router();
 
@@ -13,10 +13,11 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id/registros', async (req, res, next) => {
     try {
+        console.log("llego a la api")
         const idUsuario = req.session.id_usuario;
-        const response = await obtenerLista(req.params.id, idUsuario);
+        const response = await obtenerRegistrosDeLista(req.params.id, idUsuario);
         res.json(response);
     } catch (error) {
         next(error);
@@ -45,10 +46,11 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id/registros', async (req, res, next) => {
+router.post('/:id/registros', async (req, res, next) => {
     try {
+        console.log("llego al post de registros")
         const idUsuario = req.session.id_usuario;
-        await actualizarRegistrosLista(req.body, req.params.id, idUsuario);
+        await actualizarRegistrosLista(req.params.id, req.body, idUsuario);
 
         res.json({ message: 'Registro actualizado correctamente' });
     } catch (error) {

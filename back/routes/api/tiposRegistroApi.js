@@ -50,8 +50,9 @@ router.put('/:id', async function (req, res, next) {
 router.delete('/:id', async function (req, res, next) {
     try {
         const id = req.params.id;
+        const idUsuario = req.session.id_usuario;
 
-        const result = await deleteTipoRegistroById(id);
+        const result = await deleteTipoRegistroById(id, idUsuario);
 
         res.status(201).json(result);
     }

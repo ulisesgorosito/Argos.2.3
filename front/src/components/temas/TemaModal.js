@@ -19,7 +19,6 @@ export default function TemaModal({ tema, onClose, onSave }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-debugger;
         await guardarRequest(
             `/temas${tema ? `/${tema.id}` : ""} `,
             {

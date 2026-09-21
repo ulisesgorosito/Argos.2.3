@@ -1,4 +1,4 @@
-import { deleteLista, getLista, getListas, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
+import { deleteLista, getListas,getRegistrosDeLista, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
 
 export async function nuevaLista(obj, idUsuario) {
     try {
@@ -30,9 +30,9 @@ export async function obtenerListas(idUsuario) {
     }
 }
 
-export async function obtenerLista(idLista, idUsuario) {
+export async function obtenerRegistrosDeLista(idLista, idUsuario) {
     try {
-        const rows = await getLista(idLista, idUsuario);
+        const rows = await getRegistrosDeLista(idLista, idUsuario);
         return rows;
     } catch (error) {
         console.log(error);
@@ -50,13 +50,14 @@ export async function borrarLista(idLista, idUsuario) {
     }
 }
 
-export async function actualizarRegistrosLista(idLista, registros, idUsuario) {
+export async function actualizarRegistrosLista(idLista, idsRegistros, idUsuario) {
     try {
         const rows = await sincronizarRegistrosLista(
             idLista,
-            registros,
+            idsRegistros,
             idUsuario
         );
+        console.log("response", rows)
         return rows;
     } catch (error) {
         console.log(error);

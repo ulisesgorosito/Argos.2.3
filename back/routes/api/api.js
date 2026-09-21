@@ -14,7 +14,6 @@ const router = express.Router();
 router.use('/admin', loginApi);
 
 router.get('/auth/me', (req, res) => {
-    debugger;
     if (req.session.id_usuario) {
         return res.json({
             id: req.session.id_usuario,

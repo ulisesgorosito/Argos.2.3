@@ -23,25 +23,24 @@ export async function getListas(idUsuario) {
     }
 }
 
-export async function getLista(idLista, idUsuario) {
+export async function getRegistrosDeLista(idLista, idUsuario) {
     try {
         const query = `
             SELECT
-                l.id,
-                l.nombre,
-                l.descripcion,
+                rl.id AS idRegistroLista,
                 r.id AS idRegistro,
                 r.titulo,
                 rl.orderInt
-            FROM listas l
-            LEFT JOIN registros_listas rl ON rl.idLista = l.id
-            LEFT JOIN registros r ON r.id = rl.idRegistro
-            WHERE l.id = ?
+            FROM registros_listas rl
+            INNER JOIN registros r ON r.id = rl.idRegistro
+            INNER JOIN listas l ON rl.idLista = l.id
+            WHERE rl.idLista  = ?
             AND l.idUsuario = ?
             ORDER BY rl.orderInt
         `;
 
         const [rows] = await pool.query(query, [idLista, idUsuario]);
+        console.log("registros de la lista", rows)
         return rows;
     } catch (error) {
         console.log(error);
@@ -110,16 +109,18 @@ export async function sincronizarRegistrosLista(idLista, registros, idUsuario) {
             throw new Error("Lista no encontrada");
         }
 
-        const idsRegistro = registros.map((registro) => registro.idRegistro);
+        const idsRegistrosLista = registros
+            .filter(registro => registro.idRegistroLista)
+            .map(registro => registro.idRegistroLista);
 
-        if (idsRegistro.length > 0) {
+        if (idsRegistrosLista.length > 0) {
             await connection.query(
                 `
                     DELETE FROM registros_listas
                     WHERE idLista = ?
-                    AND idRegistro NOT IN (?)
+                    AND id NOT IN (?)
                 `,
-                [idLista, idsRegistro]
+                [idLista, idsRegistrosLista]
             );
         } else {
             await connection.query(
@@ -131,21 +132,37 @@ export async function sincronizarRegistrosLista(idLista, registros, idUsuario) {
             );
         }
 
-        for (const registro of registros) {
-            await connection.query(
-                `
-                    INSERT INTO registros_listas
-                    (idRegistro, idLista, orderInt, fechaAgregado)
-                    VALUES (?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE
-                        orderInt = VALUES(orderInt)
-                `,
-                [
-                    registro.idRegistro,
-                    idLista,
-                    registro.orderInt
-                ]
-            );
+        for (let i = 0; i < registros.length; i++) {
+            const registro = registros[i];
+
+            if (registro.idRegistroLista) {
+                await connection.query(
+                    `
+                        UPDATE registros_listas
+                        SET orderInt = ?
+                        WHERE id = ?
+                        AND idLista = ?
+                    `,
+                    [
+                        i,
+                        registro.idRegistroLista,
+                        idLista
+                    ]
+                );
+            } else {
+                await connection.query(
+                    `
+                        INSERT INTO registros_listas
+                        (idRegistro, idLista, orderInt, fechaAgregado)
+                        VALUES (?, ?, ?, NOW())
+                    `,
+                    [
+                        registro.id,
+                        idLista,
+                        i
+                    ]
+                );
+            }
         }
 
         await connection.commit();

@@ -23,11 +23,16 @@ export async function apiFetch(path, options = {}) {
         }
 
         if (!response.ok) {
-            console.log(response);
+            console.log("error de api:", response);
+            const error = await response.text();
+            console.log(error);
             throw new Error(`Error HTTP ${response.status}`);
         }
+        const data = await response.json();
 
-        return response.json();
+        console.log(path, data);
+
+        return data;
     } catch (error) {
         console.error("Error en apiFetch:", error);
         throw error;
@@ -39,7 +44,7 @@ export async function obtener(path) {
 }
 
 export async function guardarRequest(path, datos, method) {
-    console.log("guardarRequest:", path, datos, method);
+    console.log("guardar request:", path, datos, method);
     return apiFetch(path, {
         method,
         headers: {

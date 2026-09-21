@@ -1,43 +1,96 @@
 "use client";
 
 import ListaModal from "@/components/listas/ListaModal";
-import { eliminar, obtener } from "@/services/apiService";
-
-import { useEffect, useState } from "react";
+import { eliminar, guardarRequest, obtener } from "@/services/apiService";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export function ListasClient() {
     const [listas, setListas] = useState([]);
     const [lista, setLista] = useState(null);
-    const [registros, setRegistros] = useState([]);
-
+    const [registrosDropdown, setRegistrosDropdown] = useState([]);
+    const [registrosDeLista, setRegistrosDeLista] = useState([]);
     const [modalAbierto, setModalAbierto] = useState(false);
+    const [cargandoRegistros, setCargandoRegistros] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [dropdownAbierto, setDropdownAbierto] = useState(false);
+    const [hayCambios, setHayCambios] = useState(false);
+
+    const dropdownRef = useRef(null);
 
     const cargarListas = async () => {
         const listas = await obtener("/listas");
         setListas(listas);
     };
 
-    const cargarRegistros = async (idLista) => {
+    const cargarRegistrosDropdown = async () => {
+        try {
+            setCargandoRegistros(true);
+            const registros = await obtener("/registros");
+            setRegistrosDropdown(registros);
+        } catch (error) {
+            console.error(error);
+            setRegistrosDropdown([]);
+        } finally {
+            setCargandoRegistros(false);
+        }
+    };
+
+    const cargarRegistrosDeLista = async (idLista) => {
         if (!idLista) {
-            setRegistros([]);
+            setRegistrosDeLista([]);
             return;
         }
 
-        const registros = await obtener(`/listas/${idLista}`);
-        setRegistros(registros);
+        const registros = await obtener(`/listas/${idLista}/registros`);
+
+        setRegistrosDeLista(
+            registros.map(registro => ({
+                id: registro.idRegistro,
+                idRegistroLista: registro.idRegistroLista,
+                titulo: registro.titulo
+            }))
+        );
     };
 
     useEffect(() => {
         cargarListas();
+        cargarRegistrosDropdown();
     }, []);
+
+    useEffect(() => {
+        const handler = (event) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setDropdownAbierto(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handler);
+
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
+
+    const opcionesFiltradas = useMemo(() => {
+        const texto = searchTerm.trim().toLowerCase();
+
+        return registrosDropdown
+            .filter(opcion => {
+                if (!texto) return true;
+                return opcion.titulo?.toLowerCase().includes(texto);
+            });
+    }, [searchTerm, registrosDropdown]);
 
     const handleNuevaLista = () => {
         setLista(null);
-        setModalAbierto(true);
+        setRegistrosDeLista([]);
+        setHayCambios(false);
     };
 
     const onSaveLista = async () => {
         await cargarListas();
+        setModalAbierto(false);
     };
 
     const handleEditarLista = (element) => {
@@ -50,7 +103,8 @@ export function ListasClient() {
 
         if (lista?.id === element.id) {
             setLista(null);
-            setRegistros([]);
+            setRegistrosDeLista([]);
+            setHayCambios(false);
         }
 
         await cargarListas();
@@ -58,16 +112,84 @@ export function ListasClient() {
 
     const handleSeleccionarLista = async (element) => {
         setLista(element);
-        await cargarRegistros(element.id);
+        setHayCambios(false);
+        await cargarRegistrosDeLista(element.id);
+    };
+
+    const handleAgregarRegistro = (opcion) => {
+        const nuevo = {
+            id: opcion.id,
+            idRegistroLista: null,
+            key: crypto.randomUUID(),
+            titulo: opcion.titulo
+        };
+
+        setRegistrosDeLista([...registrosDeLista, nuevo]);
+        setHayCambios(true);
+        setSearchTerm("");
+        setDropdownAbierto(false);
+    };
+
+    const handleEliminarRegistro = (index) => {
+        const nuevos = registrosDeLista.filter(
+            (_, i) => i !== index
+        );
+
+        setRegistrosDeLista(nuevos);
+        setHayCambios(true);
+    };
+
+    const handleSubirRegistro = (index) => {
+        if (index === 0) return;
+
+        const nuevos = [...registrosDeLista];
+
+        [nuevos[index - 1], nuevos[index]] = [
+            nuevos[index],
+            nuevos[index - 1]
+        ];
+
+        setRegistrosDeLista(nuevos);
+        setHayCambios(true);
+    };
+
+    const handleBajarRegistro = (index) => {
+        if (index === registrosDeLista.length - 1) return;
+
+        const nuevos = [...registrosDeLista];
+
+        [nuevos[index], nuevos[index + 1]] = [
+            nuevos[index + 1],
+            nuevos[index]
+        ];
+
+        setRegistrosDeLista(nuevos);
+        setHayCambios(true);
+    };
+
+    const handleGuardarRegistros = async () => {
+        if (!lista?.id) return;
+
+        const payload = registrosDeLista.map(registro => ({
+            id: registro.id,
+            idRegistroLista: registro.idRegistroLista
+        }));
+
+        console.log("payload", payload)
+        await guardarRequest(
+            `/listas/${lista.id}/registros`,
+            payload,
+            "POST"
+        );
+
+        setHayCambios(false);
     };
 
     return (
         <div className="row">
             <div className="col-md-4">
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h2 className="m-0">
-                        Listas de lectura
-                    </h2>
+                    <h2 className="m-0">Listas de lectura</h2>
 
                     <button
                         type="button"
@@ -83,11 +205,8 @@ export function ListasClient() {
                     {listas.map((element) => (
                         <div
                             key={element.id}
-                            className={`list-group-item list-group-item-action ${
-                                lista?.id === element.id
-                                    ? "active"
-                                    : ""
-                            }`}
+                            className={`list-group-item list-group-item-action ${lista?.id === element.id ? "active" : ""
+                                }`}
                             style={{ cursor: "pointer" }}
                             onClick={() =>
                                 handleSeleccionarLista(element)
@@ -154,68 +273,160 @@ export function ListasClient() {
                                 )}
                             </div>
 
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                            >
-                                <i className="bi bi-plus-lg me-1"></i>
-                                Agregar registro
-                            </button>
+                            {hayCambios && (
+                                <button
+                                    type="button"
+                                    className="btn btn-success"
+                                    onClick={handleGuardarRegistros}
+                                >
+                                    <i className="bi bi-save me-1"></i>
+                                    Guardar
+                                </button>
+                            )}
                         </div>
 
-                        {registros.length === 0 ? (
+                        <div
+                            className="position-relative mb-3"
+                            ref={dropdownRef}
+                        >
+                            <div className="input-group">
+                                <span className="input-group-text">
+                                    <i className="bi bi-search"></i>
+                                </span>
+
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Buscar registro para agregar..."
+                                    value={searchTerm}
+                                    onChange={(event) =>
+                                        setSearchTerm(
+                                            event.target.value
+                                        )
+                                    }
+                                    onFocus={() =>
+                                        setDropdownAbierto(true)
+                                    }
+                                />
+                            </div>
+
+                            {dropdownAbierto && (
+                                <div
+                                    className="list-group position-absolute w-100 shadow"
+                                    style={{
+                                        zIndex: 1000,
+                                        maxHeight: "300px",
+                                        overflowY: "auto"
+                                    }}
+                                >
+                                    {cargandoRegistros ? (
+                                        <div className="list-group-item text-muted">
+                                            Cargando...
+                                        </div>
+                                    ) : opcionesFiltradas.length === 0 ? (
+                                        <div className="list-group-item text-muted">
+                                            Sin resultados
+                                        </div>
+                                    ) : (
+                                        opcionesFiltradas.map(
+                                            (opcion) => (
+                                                <button
+                                                    key={opcion.id}
+                                                    type="button"
+                                                    className="list-group-item list-group-item-action"
+                                                    onClick={() =>
+                                                        handleAgregarRegistro(
+                                                            opcion
+                                                        )
+                                                    }
+                                                >
+                                                    <div className="fw-semibold">
+                                                        {opcion.titulo}
+                                                    </div>
+                                                </button>
+                                            )
+                                        )
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {registrosDeLista.length === 0 ? (
                             <div className="text-muted">
-                                Esta lista todavía no tiene registros.
+                                No tiene registros.
                             </div>
                         ) : (
                             <div className="list-group">
-                                {registros.map((registro, index) => (
-                                    <div
-                                        key={registro.id}
-                                        className="list-group-item"
-                                    >
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <span className="me-2">
-                                                    {index + 1}.
-                                                </span>
-
-                                                <span className="fw-semibold">
-                                                    {registro.titulo}
-                                                </span>
-
-                                                {registro.tipoRegistro && (
-                                                    <span className="text-muted ms-2">
-                                                        ({registro.tipoRegistro})
+                                {registrosDeLista.map(
+                                    (registro, index) => (
+                                        <div
+                                            key={registro.idRegistroLista ?? registro.key}
+                                            className="list-group-item"
+                                        >
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span className="me-2">
+                                                        {index + 1}.
                                                     </span>
-                                                )}
-                                            </div>
 
-                                            <div className="d-flex gap-1">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-secondary"
-                                                >
-                                                    <i className="bi bi-arrow-up"></i>
-                                                </button>
+                                                    <span className="fw-semibold">
+                                                        {
+                                                            registro.titulo
+                                                        }
+                                                    </span>
 
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-secondary"
-                                                >
-                                                    <i className="bi bi-arrow-down"></i>
-                                                </button>
+                                                </div>
 
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-danger"
-                                                >
-                                                    <i className="bi bi-trash"></i>
-                                                </button>
+                                                <div className="d-flex gap-1">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-secondary"
+                                                        onClick={() =>
+                                                            handleSubirRegistro(
+                                                                index
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            index ===
+                                                            0
+                                                        }
+                                                    >
+                                                        <i className="bi bi-arrow-up"></i>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-secondary"
+                                                        onClick={() =>
+                                                            handleBajarRegistro(
+                                                                index
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            index ===
+                                                            registrosDeLista.length -
+                                                            1
+                                                        }
+                                                    >
+                                                        <i className="bi bi-arrow-down"></i>
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        onClick={() =>
+                                                            handleEliminarRegistro(
+                                                                index
+                                                            )
+                                                        }
+                                                    >
+                                                        <i className="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                )}
                             </div>
                         )}
                     </>

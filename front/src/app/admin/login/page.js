@@ -30,7 +30,6 @@ export default function Login() {
         );
 
         if (!response.ok) {
-            debugger;
             setError("Usuario o contraseña incorrectos");
 
             console.log(
@@ -45,7 +44,6 @@ export default function Login() {
         window.location.href = "/";
         }
         catch (error) {
-            debugger;
             console.error("Error al enviar la solicitud de inicio de sesión:", error);
             setError("Ocurrió un error al iniciar sesión. Por favor, inténtelo de nuevo.");
         }
