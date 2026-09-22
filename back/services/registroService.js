@@ -15,11 +15,6 @@ export async function nuevoRegistro(obj, idUsuario) {
             }
         }
 
-        console.log('registroData:', registroData);
-        console.log('idsAutoria:', idsAutoria);
-        console.log('idsTema:', idsTema);
-        console.log('idsListaLectura:', idsListaLectura);
-
         const rows = await insertRegistro(registroData, idUsuario);
 
         // 2. Insertar autorías
