@@ -10,7 +10,6 @@
                 Nuevo Tipo de Registro
             </a>
 
-            </a>
             <a class="btn btn-primary" href="/autorias/agregar">
                 Nueva Autoría
             </a>
@@ -63,13 +62,11 @@
         </div>
 
         <div class="form-group">
-            <label for="idAutoria">
+            <label for="idsAutoria">
                 Autoría
             </label>
 
-            <select id="idAutoria" name="idAutoria" required>
-                <option value="">Seleccionar Autoría</option>
-
+            <select id="idsAutoria" name="idsAutoria" multiple required size="6">
                 {{#each autorias}}
                 <option value="{{id}}">
                     {{apellido}}, {{nombre}}
@@ -79,19 +76,28 @@
         </div>
 
         <div class="form-group">
-            <label for="fechaPublicacion">
+            <label for="fechaPublicacionOriginal">
                 Fecha de publicación
             </label>
 
-            <input type="date" id="fechaPublicacion" name="fechaPublicacion" required>
+            <input type="date" id="fechaPublicacionOriginal" name="fechaPublicacionOriginal">
         </div>
 
         <div class="form-group">
-            <label for="editorial">
+            <label for="fechaEdicion">
+                Fecha de edición
+                <span>(opcional)</span>
+            </label>
+
+            <input type="date" id="fechaEdicion" name="fechaEdicion">
+        </div>
+
+        <div class="form-group">
+            <label for="editorialRevista">
                 Editorial o revista
             </label>
 
-            <input type="text" id="editorial" name="editorial" required>
+            <input type="text" id="editorialRevista" name="editorialRevista">
         </div>
 
         <div class="form-group">
@@ -99,7 +105,7 @@
                 Páginas
             </label>
 
-            <input type="text" id="paginas" name="paginas" required>
+            <input type="text" id="paginas" name="paginas">
         </div>
 
         <div class="form-group">
@@ -107,7 +113,7 @@
                 Lugar
             </label>
 
-            <input type="text" id="lugar" name="lugar" required>
+            <input type="text" id="lugar" name="lugar">
         </div>
 
         <div class="form-group">

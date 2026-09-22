@@ -6,7 +6,8 @@ var router = express.Router();
 
 router.get('/', async function (req, res, next) {
     try {
-        var temas = await getTemas();
+        const idUsuario = req.session.id_usuario;
+        var temas = await getTemas(idUsuario);
 
         res.render('temas/temas', {
             layout: 'layout',
@@ -49,13 +50,14 @@ router.get(`/eliminar/:id`, async (req, res, next) => {
 })
 
 router.get('/editar/:id', async function (req, res, next) {
-        var id = req.params.id;
-        let tema = await getTemaById(id);
-        res.render('temas/editar', {
-            layout: 'layout',
-            tema: tema[0]
-        });
-    }
+    var id = req.params.id;
+     const idUsuario = req.session.id_usuario;
+    let tema = await getTemaById(id, idUsuario);
+    res.render('temas/editar', {
+        layout: 'layout',
+        tema: tema[0]
+    });
+}
 );
 
 router.post('/editar/:id', async function (req, res, next) {

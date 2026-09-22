@@ -5,23 +5,35 @@ export async function nuevoRegistro(obj, idUsuario) {
     try {
         const idRegistro = randomUUID();
         obj.id = idRegistro;
+
         // 1. Insertar en registros
         const { idsAutoria, idsTema, idsListaLectura, ...registroData } = obj;
+
+        for (const campo in registroData) {
+            if (registroData[campo] === '') {
+                registroData[campo] = null;
+            }
+        }
+
+        console.log('registroData:', registroData);
+        console.log('idsAutoria:', idsAutoria);
+        console.log('idsTema:', idsTema);
+        console.log('idsListaLectura:', idsListaLectura);
 
         const rows = await insertRegistro(registroData, idUsuario);
 
         // 2. Insertar autorías
-        for (const idAutoria of obj.idsAutoria || []) {
+        for (const idAutoria of idsAutoria || []) {
             await insertRegistroAutoria(idRegistro, idAutoria);
         }
 
         // 3. Insertar temas
-        for (const idTema of obj.idsTema || []) {
+        for (const idTema of idsTema || []) {
             await insertRegistroTema(idRegistro, idTema);
         }
 
         // 4. Insertar listas de lectura
-        for (const idLista of obj.idsListaLectura || []) {
+        for (const idLista of idsListaLectura || []) {
             await insertRegistroLista(idRegistro, idLista);
         }
 
@@ -31,7 +43,6 @@ export async function nuevoRegistro(obj, idUsuario) {
         throw error;
     }
 }
-
 
 export async function actualizarRegistro(obj, idRegistro, idUsuario) {
     try {
@@ -118,7 +129,7 @@ export async function obtenerRegistro(idRegistro, idUsuario) {
     const rows = await getRegistroById(idRegistro, idUsuario);
 
     console.log("registro por id", rows)
-    if (rows.length === 0 ) {
+    if (rows.length === 0) {
         return null;
     }
 

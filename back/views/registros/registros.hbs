@@ -19,18 +19,16 @@
                 <th>Título</th>
                 <th>Subtítulo</th>
                 <th>Fecha de publicación</th>
-                <th>Editorial</th>
             </tr>
         </thead>
 
         <tbody>
-            {{#each registro}}
+            {{#each registros}}
             <tr>
-                <td>{{autor}}</td>
+                <td>{{#each autorias}}{{apellido}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                 <td>{{titulo}}</td>
                 <td>{{subtitulo}}</td>
-                <td>{{fecha_publicacion}}</td>
-                <td>{{editorial}}</td>
+                <td>{{fechaPublicacionOriginal}}</td>
             </tr>
             {{else}}
             <tr>

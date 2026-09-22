@@ -83,6 +83,7 @@ export function ListasClient() {
     }, [searchTerm, registrosDropdown]);
 
     const handleNuevaLista = () => {
+        setModalAbierto(true);
         setLista(null);
         setRegistrosDeLista([]);
         setHayCambios(false);
