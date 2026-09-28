@@ -33,6 +33,15 @@ export default function Nav() {
                             Listas de lectura
                         </Link>
                     </li>
+
+                     <li className="nav-item">
+                        <Link className="nav-link" href="/historiales">
+                            <i className="bi bi-clock-history"></i>
+                          Historial de Lectura
+                        </Link>
+                    </li>
+
+                    
                 </ul>
 
             </div>

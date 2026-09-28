@@ -7,6 +7,9 @@ export function Tabla({
     onDelete,
     canModify
 }) {
+    const getValue = (object, path) =>
+        path.split(".").reduce((value, key) => value?.[key], object);
+
     return (
         <table className="data-table">
             <thead>
@@ -32,13 +35,17 @@ export function Tabla({
                 ) : (
                     data.map((row) => (
                         <tr key={row.id}>
-                            {columns.map((column) => (
-                                <td key={column.key}>
-                                    {column.render
-                                        ? column.render(row[column.key])
-                                        : row[column.key]}
-                                </td>
-                            ))}
+                            {columns.map((column) => {
+                                const value = getValue(row, column.key);
+
+                                return (
+                                    <td key={column.key}>
+                                        {column.render
+                                            ? column.render(value, row)
+                                            : value}
+                                    </td>
+                                );
+                            })}
                             <td className="actions">
                                 {(!canModify || canModify(row)) && (
                                     <>

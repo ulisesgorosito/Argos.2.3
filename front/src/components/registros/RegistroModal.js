@@ -218,8 +218,6 @@ export default function RegistroModal({ registro, onClose, onSave }) {
                                 <input
                                     id="anioPublicacionOriginal"
                                     type="number"
-                                    min="1000"
-                                    max="2100"
                                     placeholder="Ej: 1984"
                                     value={anioPublicacionOriginal}
                                     onChange={(event) => setAnioPublicacionOriginal(event.target.value)}

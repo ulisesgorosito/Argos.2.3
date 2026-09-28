@@ -11,7 +11,7 @@ export default function AutoriaModal({ autoria, onClose, onSave }) {
     const [fechaMuerte, setFechaMuerte] = useState("");
 
     useEffect(() => {
-        console.log(autoria);
+        
         if (autoria) {
             setNombre(autoria.nombre || "");
             setApellido(autoria.apellido || "");
