@@ -1,4 +1,4 @@
-import { getActividades } from "../models/actividadesModel";
+import { deleteActividadById, getActividadById, getActividades, insertActividad, updateActividad } from "../models/actividadesModel";
 
 export async function obtenerActividades(idUsuario) {
     try {
@@ -34,6 +34,47 @@ export async function obtenerActividades(idUsuario) {
         }
 
         return historiales;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function nuevaActividad(obj, idUsuario) {
+    try {
+        const rows = await insertActividad(obj, idUsuario);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function actualizarActividad(obj, idActividad, idUsuario) {
+    try {
+        const rows = await updateActividad(obj, idActividad, idUsuario);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
+export async function obtenerActividadById(idActividad, idUsuario) {
+    try {
+        const rows = await getActividadById(idActividad, idUsuario);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function borrarActividad(idActividad, idUsuario) {
+    try {
+        const rows = await deleteActividadById(idActividad, idUsuario);
+        return rows;
     } catch (error) {
         console.log(error);
         throw error;
