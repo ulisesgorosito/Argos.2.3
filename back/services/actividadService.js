@@ -1,4 +1,5 @@
-import { deleteActividadById, getActividadById, getActividades, insertActividad, updateActividad } from "../models/actividadesModel.js";
+import { deleteActividadById, getActividadById, getActividades, insertActividad, updateActividad }
+ from "../models/actividadesModel.js";
 
 export async function obtenerActividades(idUsuario) {
     try {
@@ -40,6 +41,38 @@ export async function obtenerActividades(idUsuario) {
     }
 }
 
+export async function obtenerActividadById(idActividad, idUsuario) {
+    try {
+        const rows = await getActividadById(idActividad, idUsuario);
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        const actividad = {
+            id: rows[0].id,
+            nombre: rows[0].nombre,
+            descripcion: rows[0].descripcion,
+            idLista: rows[0].idLista,
+            horarios: []
+        };
+
+        for (const row of rows) {
+            actividad.horarios.push({
+                id: row.idHorario,
+                intSemana: row.intSemana,
+                horaDesde: row.horaDesde,
+                horaHasta: row.horaHasta
+            });
+        }
+
+        return actividad;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export async function nuevaActividad(obj, idUsuario) {
     try {
         obj.id = crypto.randomUUID();
@@ -54,17 +87,6 @@ export async function nuevaActividad(obj, idUsuario) {
 export async function actualizarActividad(obj, idActividad, idUsuario) {
     try {
         const rows = await updateActividad(obj, idActividad, idUsuario);
-        return rows;
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-}
-
-
-export async function obtenerActividadById(idActividad, idUsuario) {
-    try {
-        const rows = await getActividadById(idActividad, idUsuario);
         return rows;
     } catch (error) {
         console.log(error);

@@ -16,7 +16,7 @@ export async function getActividades(idUsuario) {
             ha.horaHasta,
             li.nombre AS nombreLista
         FROM actividades a
-        LEFT JOIN horarios_actividad ha
+        LEFT JOIN horarios_actividades ha
             ON ha.idActividad = a.id
         LEFT JOIN listas li
             ON li.id = a.idLista
@@ -38,15 +38,22 @@ export async function getActividadById(idActividad, idUsuario) {
             a.id,
             a.nombre,
             a.descripcion,
-            a.idLista
-             FROM actividades a 
-            WHERE a.id = ? AND a.idUsuario = ? `;
+            a.idLista,
+            ha.id AS idHorario,
+            ha.intSemana,
+            ha.horaDesde,
+            ha.horaHasta
+        FROM actividades a 
+        LEFT JOIN horarios_actividades ha
+            ON ha.idActividad = a.id
+        WHERE a.id = ? AND a.idUsuario = ? `;
         const [rows] = await pool.query(query, [idActividad, idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);
     }
 }
+
 export async function insertActividad(obj, idUsuario) {
     try {
         obj.idUsuario = idUsuario;
