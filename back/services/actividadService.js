@@ -1,4 +1,4 @@
-import { deleteActividadById, getActividadById, getActividades, insertActividad, updateActividad } from "../models/actividadesModel";
+import { deleteActividadById, getActividadById, getActividades, insertActividad, updateActividad } from "../models/actividadesModel.js";
 
 export async function obtenerActividades(idUsuario) {
     try {
@@ -25,15 +25,15 @@ export async function obtenerActividades(idUsuario) {
                 actividades.push(actividad);
             }
 
-                historial.horarios.push({
-                    id: row.idHorario,
-                    intSemana: row.intSemana,
-                    horaDesde: row.horaDesde,
-                    horaHasta: row.horaHasta
-                });
+            actividad.horarios.push({
+                id: row.idHorario,
+                intSemana: row.intSemana,
+                horaDesde: row.horaDesde,
+                horaHasta: row.horaHasta
+            });
         }
 
-        return historiales;
+        return actividades;
     } catch (error) {
         console.log(error);
         throw error;
@@ -42,8 +42,9 @@ export async function obtenerActividades(idUsuario) {
 
 export async function nuevaActividad(obj, idUsuario) {
     try {
+        obj.id = crypto.randomUUID();
         const rows = await insertActividad(obj, idUsuario);
-        return rows;
+        return obj.id;
     } catch (error) {
         console.log(error);
         throw error;
@@ -74,6 +75,7 @@ export async function obtenerActividadById(idActividad, idUsuario) {
 export async function borrarActividad(idActividad, idUsuario) {
     try {
         const rows = await deleteActividadById(idActividad, idUsuario);
+        console.log("Actividad eliminada:", rows);
         return rows;
     } catch (error) {
         console.log(error);

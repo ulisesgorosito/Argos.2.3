@@ -28,6 +28,11 @@ export async function apiFetch(path, options = {}) {
             console.log(error);
             throw new Error(`Error HTTP ${response.status}`);
         }
+
+        if (response.status === 204) {
+            return;
+        }
+
         const data = await response.json();
 
         console.log(path, data);

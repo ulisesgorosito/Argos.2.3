@@ -41,7 +41,6 @@ app.use(session({
 
 secure = async (req, res, next) => {
   try {
-    console.log(req.session.id_usuario);
     if (req.session.id_usuario) {
       next();
     } else {

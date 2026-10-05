@@ -12,6 +12,12 @@ export default function Nav() {
                             Inicio
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" href="/actividades">
+                            <i className="bi bi-calendar"></i>
+                            Actividades
+                        </Link>
+                    </li>
 
                     <li className="nav-item">
                         <Link className="nav-link" href="/registros">

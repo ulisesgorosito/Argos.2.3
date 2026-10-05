@@ -21,7 +21,7 @@ router.post('/', async (req, res, next) => {
 
         const idUsuario = req.session.id_usuario;
         const response = await nuevaActividad(req.body, idUsuario);
-
+        console.log("RESPONSE POST ACTIVIDAD", response)
         res.status(201).json(response);
     }
     catch (error) {
@@ -45,10 +45,10 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try {
-         const idUsuario = req.session.id_usuario;
+        const idUsuario = req.session.id_usuario;
         await borrarActividad(req.params.id, idUsuario);
 
-           res.status(201).json(response);
+        res.sendStatus(204);
     } catch (error) {
         next(error);
     }

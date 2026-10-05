@@ -33,6 +33,6 @@ router.use('/tiposRegistro', secure, tiposRegistroApi);
 router.use('/registros', secure, registrosApi);
 router.use('/listas', secure, listasApi);
 router.use('/historiales', secure, historialesApi);
-router.use('/activades', secure, actividadesApi)
+router.use('/actividades', secure, actividadesApi)
 
 module.exports = router;

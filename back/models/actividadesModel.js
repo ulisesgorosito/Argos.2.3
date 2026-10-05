@@ -1,6 +1,6 @@
 import pool from './bd.js';
 
-export async function getActividades(idUsuario, fechaInicio, fechaFin) {
+export async function getActividades(idUsuario) {
 
     try {
 
@@ -75,6 +75,7 @@ export async function deleteActividadById(idActividad, idUsuario) {
     var query = "delete from actividades where id = ?  AND idUsuario = ?"
     try {
         var [rows] = await pool.query(query, [idActividad, idUsuario])
+
         return rows;
     }
     catch (error) {
