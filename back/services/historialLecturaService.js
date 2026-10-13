@@ -1,8 +1,18 @@
 import { deleteHistorialById, getHistorialesLectura, getHistorialLecturaById, insertHistorial, updateHistorial } from "../models/historialesLecturasModel.js";
+import { deleteSeleccion, insertSeleccion } from "../models/seleccionesModel.js";
 
 export async function nuevoHistorial(obj, idUsuario) {
     try {
-        const rows = await insertHistorial(obj, idUsuario);
+        const { selecciones, ...historial } = obj;
+        historial.id = crypto.randomUUID();
+
+        const rows = await insertHistorial(historial, idUsuario);
+
+        for (const seleccion of selecciones) {
+            seleccion.idHistorialLectura = historial.id;
+            await insertSeleccion(seleccion);
+        }
+
         return rows;
     } catch (error) {
         console.log(error);
@@ -12,13 +22,26 @@ export async function nuevoHistorial(obj, idUsuario) {
 
 export async function actualizarHistorial(obj, idHistorial, idUsuario) {
     try {
-        const rows = await updateHistorial(obj, idHistorial, idUsuario);
+        console.log(`Historial:  ${JSON.stringify(obj)}`)
+        console.log(`idHistorial:  ${idHistorial}`)
+        const { selecciones, id, ...historial } = obj;
+        const rows = await updateHistorial(historial, idHistorial, idUsuario);
+
+        await deleteSeleccion(idHistorial);
+
+        for (const seleccion of selecciones) {
+            seleccion.id = crypto.randomUUID();
+            seleccion.idHistorialLectura = idHistorial;
+            await insertSeleccion(seleccion);
+        }
+
         return rows;
     } catch (error) {
         console.log(error);
         throw error;
     }
 }
+
 export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
     try {
         const rows = await getHistorialesLectura(idUsuario, fechaInicio, fechaFin);
@@ -34,8 +57,6 @@ export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
                     fechaInicio: row.fechaInicio,
                     fechaFin: row.fechaFin,
                     idRegistro: row.idRegistro,
-                    primeraPagina: row.primeraPagina,
-                    ultimaPagina: row.ultimaPagina,
                     paginaActual: row.paginaActual,
                     registro: {
                         titulo: row.titulo,
@@ -68,7 +89,27 @@ export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
 export async function obtenerHistorial(idHistorial, idUsuario) {
     try {
         const rows = await getHistorialLecturaById(idHistorial, idUsuario);
-        return rows;
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        return {
+            id: rows[0].id,
+            fechaInicio: rows[0].fechaInicio,
+            fechaFin: rows[0].fechaFin,
+            idRegistro: rows[0].idRegistro,
+            paginaActual: rows[0].paginaActual,
+            idUsuario: rows[0].idUsuario,
+            selecciones: rows
+                .filter(row => row.idSeleccion !== null)
+                .map(row => ({
+                    id: row.idSeleccion,
+                    titulo: row.titulo,
+                    primeraPagina: row.primeraPagina,
+                    ultimaPagina: row.ultimaPagina
+                }))
+        };
     } catch (error) {
         console.log(error);
         throw error;

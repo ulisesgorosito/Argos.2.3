@@ -1,5 +1,7 @@
 const express = require('express');
-const { obtenerHistoriales, nuevoHistorial, actualizarHistorial, borrarHistorial } = require('../../services/historialLecturaService');
+const { obtenerHistoriales, nuevoHistorial, actualizarHistorial, borrarHistorial,
+    obtenerHistorial
+ } = require('../../services/historialLecturaService');
 
 const router = express.Router();
 
@@ -11,7 +13,6 @@ router.get('/', async (req, res, next) => {
         const { fechaInicio, fechaFin } = req.query;
 
         const response = await obtenerHistoriales(idUsuario, fechaInicio, fechaFin);
-
         res.json(response);
 
     } catch (error) {
@@ -21,6 +22,23 @@ router.get('/', async (req, res, next) => {
     }
 
 });
+
+router.get('/:id', async (req, res, next) => {
+
+    try {
+        const idUsuario = req.session.id_usuario;
+
+        const response = await obtenerHistorial(req.params.id, idUsuario);
+        res.json(response);
+
+    } catch (error) {
+
+        next(error);
+
+    }
+
+});
+
 router.post('/', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;

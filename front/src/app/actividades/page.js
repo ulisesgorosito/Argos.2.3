@@ -17,11 +17,6 @@ const columns = [
         key: "lista",
         title: "Lista",
         render: (lista) => lista?.nombre ?? "-"
-    },
-    {
-        key: "horarios",
-        title: "Horarios",
-        render: (row) => row.horarios?.length ?? 0
     }
 ];
 

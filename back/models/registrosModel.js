@@ -34,6 +34,7 @@ export async function getRegistros(idUsuario) {
             r.idTipoRegistro,
             r.titulo,
             r.subtitulo,
+            r.paginas,
             r.fechaPublicacionOriginal,
             r.fechaEdicion,
             r.editorialRevista,

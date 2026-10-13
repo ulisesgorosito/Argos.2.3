@@ -26,18 +26,6 @@ const columns = [
         key: "fechaFin",
         title: "Fecha fin",
         render: fechaFin => extraerFecha(fechaFin)
-    },
-    {
-        key: "primeraPagina",
-        title: "Primera página"
-    },
-    {
-        key: "ultimaPagina",
-        title: "Última página"
-    },
-    {
-        key: "paginaActual",
-        title: "Página actual"
     }
 ];
 
@@ -80,7 +68,7 @@ export default function HistorialesLecturaPage() {
 
     const handleEditar = async (historial) => {
 
-        setHistorial(historial);
+        await cargarHistorial(historial.id);
         setModalAbierto(true);
 
     };
@@ -92,6 +80,22 @@ export default function HistorialesLecturaPage() {
             await eliminar(`/historiales/${historial.id}`);
 
             await cargarHistoriales();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    };
+
+       const cargarHistorial = async (id) => {
+
+        try {
+
+            const historial = await obtener(`/historiales/${id}`);
+
+            setHistorial(historial);
 
         } catch (error) {
 

@@ -80,6 +80,7 @@ export async function obtenerRegistros(idUsuario) {
                     idTipoRegistro: registro.idTipoRegistro,
                     titulo: registro.titulo,
                     subtitulo: registro.subtitulo,
+                    paginas: registro.paginas,
                     fechaPublicacionOriginal: registro.fechaPublicacionOriginal,
                     fechaEdicion: registro.fechaEdicion,
                     editorialRevista: registro.editorialRevista,

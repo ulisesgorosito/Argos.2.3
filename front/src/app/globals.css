@@ -898,3 +898,43 @@ body.dark-mode {
         padding: 20px;
     }
 }
+
+.dark-mode .list-group-item {
+    background-color: #1a1a2e;
+    border-color: #2a2a40;
+    color: #d0d0e8;
+}
+
+.dark-mode .list-group-item-action:hover {
+    background-color: #24243b;
+    color: #f0f0ff;
+}
+
+.dark-mode .list-group-item.active {
+    background-color: #5b54d6;
+    border-color: #5b54d6;
+    color: #ffffff;
+}
+
+.dark-mode .input-group-text {
+    background-color: #1a1a2e;
+    border-color: #3a3a5a;
+    color: #d0d0e8;
+}
+
+.dark-mode .form-control {
+    background-color: #1a1a2e;
+    border-color: #3a3a5a;
+    color: #e0e0f0;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #8888a8;
+}
+
+.dark-mode .form-control:focus {
+    background-color: #1e1e35;
+    border-color: #6c63ff;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}

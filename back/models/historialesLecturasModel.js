@@ -10,9 +10,6 @@ export async function getHistorialesLectura(idUsuario, fechaInicio, fechaFin) {
                 hl.fechaInicio,
                 hl.fechaFin,
                 hl.idRegistro,
-                hl.primeraPagina,
-                hl.ultimaPagina,
-                hl.paginaActual,
                 r.titulo,
                 r.subtitulo,
                 r.fechaPublicacionOriginal,
@@ -39,13 +36,32 @@ export async function getHistorialesLectura(idUsuario, fechaInicio, fechaFin) {
 
 export async function getHistorialLecturaById(idHistorial, idUsuario) {
     try {
-        const query = "SELECT * FROM historiales_lectura WHERE id = ? AND idUsuario = ? ";
+        const query = `
+            SELECT
+                historiales_lectura.id,
+                historiales_lectura.fechaInicio,
+                historiales_lectura.fechaFin,
+                historiales_lectura.idRegistro,
+                historiales_lectura.paginaActual,
+                selecciones_lectura.id AS idSeleccion,
+                selecciones_lectura.idHistorialLectura,
+                selecciones_lectura.titulo,
+                selecciones_lectura.primeraPagina,
+                selecciones_lectura.ultimaPagina
+            FROM historiales_lectura
+            LEFT JOIN selecciones_lectura
+                ON selecciones_lectura.idHistorialLectura = historiales_lectura.id
+            WHERE historiales_lectura.id = ?
+                AND historiales_lectura.idUsuario = ?
+        `;
+
         const [rows] = await pool.query(query, [idHistorial, idUsuario]);
         return rows;
     } catch (error) {
         console.log(error);
     }
 }
+
 export async function insertHistorial(obj, idUsuario) {
     try {
         obj.idUsuario = idUsuario;
