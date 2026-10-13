@@ -3,6 +3,9 @@
 import ListaModal from "@/components/listas/ListaModal";
 import { eliminar, guardarRequest, obtener } from "@/services/apiService";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { DragDropProvider } from "@dnd-kit/react";
+import { isSortable } from "@dnd-kit/react/sortable";
+import RegistroOrdenable from "@/components/listas/RegistroOrdenable";
 
 export default function ListasPage() {
     const [listas, setListas] = useState([]);
@@ -186,6 +189,29 @@ export default function ListasPage() {
         setHayCambios(false);
     };
 
+    const handleReordenarRegistros = (event) => {
+        if (event.canceled) return;
+
+        const { source } = event.operation;
+
+        if (!isSortable(source)) return;
+
+        const { initialIndex, index } = source;
+
+        if (initialIndex === index) return;
+
+        setRegistrosDeLista(registros => {
+            const nuevos = [...registros];
+            const [registro] = nuevos.splice(initialIndex, 1);
+
+            nuevos.splice(index, 0, registro);
+
+            return nuevos;
+        });
+
+        setHayCambios(true);
+    };
+
     return (
         <div className="row">
             <div className="col-md-4">
@@ -206,9 +232,8 @@ export default function ListasPage() {
                     {listas.map((element) => (
                         <div
                             key={element.id}
-                            className={`list-group-item list-group-item-action ${
-                                lista?.id === element.id ? "active" : ""
-                            }`}
+                            className={`list-group-item list-group-item-action ${lista?.id === element.id ? "active" : ""
+                                }`}
                             style={{ cursor: "pointer" }}
                             onClick={() =>
                                 handleSeleccionarLista(element)
@@ -359,75 +384,20 @@ export default function ListasPage() {
                             </div>
                         ) : (
                             <div className="list-group">
-                                {registrosDeLista.map(
-                                    (registro, index) => (
-                                        <div
-                                            key={
-                                                registro.idRegistroLista ??
-                                                registro.key
-                                            }
-                                            className="list-group-item"
-                                        >
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <span className="me-2">
-                                                        {index + 1}.
-                                                    </span>
-
-                                                    <span className="fw-semibold">
-                                                        {registro.titulo}
-                                                    </span>
-                                                </div>
-
-                                                <div className="d-flex gap-1">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-secondary"
-                                                        onClick={() =>
-                                                            handleSubirRegistro(
-                                                                index
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            index === 0
-                                                        }
-                                                    >
-                                                        <i className="bi bi-arrow-up"></i>
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-secondary"
-                                                        onClick={() =>
-                                                            handleBajarRegistro(
-                                                                index
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            index ===
-                                                            registrosDeLista.length -
-                                                                1
-                                                        }
-                                                    >
-                                                        <i className="bi bi-arrow-down"></i>
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-outline-danger"
-                                                        onClick={() =>
-                                                            handleEliminarRegistro(
-                                                                index
-                                                            )
-                                                        }
-                                                    >
-                                                        <i className="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                )}
+                                <DragDropProvider
+                                    onDragEnd={handleReordenarRegistros}
+                                >
+                                    <div className="list-group">
+                                        {registrosDeLista.map((registro, index) => (
+                                            <RegistroOrdenable
+                                                key={registro.idRegistroLista ?? registro.key}
+                                                registro={registro}
+                                                index={index}
+                                                handleEliminarRegistro={handleEliminarRegistro}
+                                            />
+                                        ))}
+                                    </div>
+                                </DragDropProvider>
                             </div>
                         )}
                     </>
