@@ -1,4 +1,8 @@
-import { deleteRegistroAutorias, deleteRegistroListas, deleteRegistroTemas, getRegistroById, getRegistros, insertRegistro, insertRegistroAutoria, insertRegistroLista, insertRegistroTema, updateRegistro } from "../models/registrosModel.js";
+import {
+    deleteRegistroAutorias, deleteRegistroListas, deleteRegistroTemas, getRegistroById,
+    getRegistros, insertRegistro, insertRegistroAutoria, insertRegistroLista,
+    insertRegistroTema, updateRegistro, getRegistrosSimple
+} from "../models/registrosModel.js";
 import { randomUUID } from "crypto";
 
 export async function nuevoRegistro(obj, idUsuario) {
@@ -120,6 +124,38 @@ export async function obtenerRegistros(idUsuario) {
 
     return registros;
 }
+
+export async function obtenerRegistrosDropdown(idUsuario) {
+    const rows = await getRegistrosSimple(idUsuario);
+
+    const registros = Object.values(
+        rows.reduce((registrosAgrupados, registro) => {
+            if (!registrosAgrupados[registro.id]) {
+                registrosAgrupados[registro.id] = {
+                    id: registro.id,
+                    titulo: registro.titulo,
+                    subtitulo: registro.subtitulo,
+                    autorias: [],
+                };
+            }
+
+            if (
+                registro.idAutoria &&
+                !registrosAgrupados[registro.id].autorias.includes(registro.autoria)
+            ) {
+                registrosAgrupados[registro.id].autorias.push(registro.autoria);
+            }
+
+            return registrosAgrupados;
+        }, {})
+    ).map(registro => ({
+        ...registro,
+        autorias: registro.autorias.join(", ")
+    }));
+
+    return registros;
+}
+
 
 export async function obtenerRegistro(idRegistro, idUsuario) {
     const rows = await getRegistroById(idRegistro, idUsuario);

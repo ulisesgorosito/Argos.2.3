@@ -33,7 +33,36 @@ export async function obtenerListas(idUsuario) {
 export async function obtenerRegistrosDeLista(idLista, idUsuario) {
     try {
         const rows = await getRegistrosDeLista(idLista, idUsuario);
-        return rows;
+
+        return Object.values(
+            rows.reduce((registrosAgrupados, registro) => {
+                if (!registrosAgrupados[registro.idRegistro]) {
+                    registrosAgrupados[registro.idRegistro] = {
+                        idRegistroLista: registro.idRegistroLista,
+                        idRegistro: registro.idRegistro,
+                        titulo: registro.titulo,
+                        orderInt: registro.orderInt,
+                        autorias: []
+                    };
+                }
+
+                if (
+                    registro.idAutoria &&
+                    !registrosAgrupados[registro.idRegistro].autorias.includes(
+                        registro.apellido
+                    )
+                ) {
+                    registrosAgrupados[registro.idRegistro].autorias.push(
+                        registro.apellido
+                    );
+                }
+
+                return registrosAgrupados;
+            }, {})
+        ).map(registro => ({
+            ...registro,
+            autorias: registro.autorias.join(", ")
+        }));
     } catch (error) {
         console.log(error);
         throw error;

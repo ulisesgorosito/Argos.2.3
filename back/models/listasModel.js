@@ -74,10 +74,14 @@ export async function getRegistrosDeLista(idLista, idUsuario) {
                 rl.id AS idRegistroLista,
                 r.id AS idRegistro,
                 r.titulo,
-                rl.orderInt
+                rl.orderInt,
+                a.id AS idAutoria,
+                a.apellido
             FROM registros_listas rl
             INNER JOIN registros r ON r.id = rl.idRegistro
             INNER JOIN listas l ON rl.idLista = l.id
+            LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
+            LEFT JOIN autorias a ON a.id = ra.idAutoria
             WHERE rl.idLista  = ?
             AND l.idUsuario = ?
             ORDER BY rl.orderInt

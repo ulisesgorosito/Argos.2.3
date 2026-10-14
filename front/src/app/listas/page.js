@@ -28,7 +28,7 @@ export default function ListasPage() {
     const cargarRegistrosDropdown = async () => {
         try {
             setCargandoRegistros(true);
-            const registros = await obtener("/registros");
+            const registros = await obtener("/dropdown/registros");
             setRegistrosDropdown(registros);
         } catch (error) {
             console.error(error);
@@ -50,7 +50,8 @@ export default function ListasPage() {
             registros.map(registro => ({
                 id: registro.idRegistro,
                 idRegistroLista: registro.idRegistroLista,
-                titulo: registro.titulo
+                titulo: registro.titulo,
+                autorias: registro.autorias
             }))
         );
     };
@@ -78,10 +79,10 @@ export default function ListasPage() {
     const opcionesFiltradas = useMemo(() => {
         const texto = searchTerm.trim().toLowerCase();
 
-        return registrosDropdown.filter(opcion => {
-            if (!texto) return true;
-            return opcion.titulo?.toLowerCase().includes(texto);
-        });
+        return registrosDropdown.filter(opcion =>
+            opcion.titulo?.toLowerCase().includes(texto) ||
+            opcion.autorias?.toLowerCase().includes(texto)
+        );
     }, [searchTerm, registrosDropdown]);
 
     const handleNuevaLista = () => {
@@ -124,7 +125,8 @@ export default function ListasPage() {
             id: opcion.id,
             idRegistroLista: null,
             key: crypto.randomUUID(),
-            titulo: opcion.titulo
+            titulo: opcion.titulo,
+            autorias: opcion.autorias
         };
 
         setRegistrosDeLista([...registrosDeLista, nuevo]);
@@ -137,34 +139,6 @@ export default function ListasPage() {
         const nuevos = registrosDeLista.filter(
             (_, i) => i !== index
         );
-
-        setRegistrosDeLista(nuevos);
-        setHayCambios(true);
-    };
-
-    const handleSubirRegistro = (index) => {
-        if (index === 0) return;
-
-        const nuevos = [...registrosDeLista];
-
-        [nuevos[index - 1], nuevos[index]] = [
-            nuevos[index],
-            nuevos[index - 1]
-        ];
-
-        setRegistrosDeLista(nuevos);
-        setHayCambios(true);
-    };
-
-    const handleBajarRegistro = (index) => {
-        if (index === registrosDeLista.length - 1) return;
-
-        const nuevos = [...registrosDeLista];
-
-        [nuevos[index], nuevos[index + 1]] = [
-            nuevos[index + 1],
-            nuevos[index]
-        ];
 
         setRegistrosDeLista(nuevos);
         setHayCambios(true);
@@ -368,7 +342,7 @@ export default function ListasPage() {
                                                     }
                                                 >
                                                     <div className="fw-semibold">
-                                                        {opcion.titulo}
+                                                        {opcion.autorias}, {opcion.titulo}
                                                     </div>
                                                 </button>
                                             )

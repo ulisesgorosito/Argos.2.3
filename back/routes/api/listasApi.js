@@ -18,6 +18,7 @@ router.get('/:id/registros', async (req, res, next) => {
         console.log("llego a la api")
         const idUsuario = req.session.id_usuario;
         const response = await obtenerRegistrosDeLista(req.params.id, idUsuario);
+        console.dir(response, { depth: null });
         res.json(response);
     } catch (error) {
         next(error);
@@ -60,7 +61,7 @@ router.post('/:id/registros', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try {
-         const idUsuario = req.session.id_usuario;
+        const idUsuario = req.session.id_usuario;
         await borrarLista(req.params.id, idUsuario);
 
         res.json({ message: 'Registro eliminado correctamente' });

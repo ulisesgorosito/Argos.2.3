@@ -27,6 +27,27 @@ export async function getRegistroById(idRegistro, idUsuario) {
     }
 }
 
+export async function getRegistrosSimple(idUsuario) {
+    try {
+        const query = `SELECT
+            r.id,
+            r.titulo,
+            r.subtitulo,
+            a.id AS idAutoria,
+            a.apellido AS autoria
+            from registros r
+            left join registros_autorias ra ON ra.idRegistro = r.id
+            left join autorias a ON a.id = ra.idAutoria
+            WHERE r.idUsuario IS NULL
+            OR r.idUsuario = ?`;
+
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export async function getRegistros(idUsuario) {
     try {
         const query = `SELECT
