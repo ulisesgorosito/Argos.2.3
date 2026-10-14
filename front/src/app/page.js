@@ -51,7 +51,10 @@ export default function Home() {
 
                                         {actividad.horarios.map(horario => (
                                             <p key={horario.id} className="text-muted mb-1">
-                                                {String(horario.horaDesde).slice(0, 5)}
+                                                {DIAS_SEMANA.find(
+                                                    dia => dia.value === horario.intSemana
+                                                )?.label}{" "}
+                                                · {String(horario.horaDesde).slice(0, 5)}
                                                 {" - "}
                                                 {String(horario.horaHasta).slice(0, 5)}
                                             </p>

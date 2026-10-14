@@ -33,6 +33,49 @@ export async function getActividades(idUsuario) {
 
 }
 
+export async function getActividadesDashboard(idUsuario, diaActual, horaActual) {
+    try {
+        const query = `
+            SELECT
+                a.id,
+                a.nombre,
+                a.descripcion,
+                a.idLista,
+                ha.id AS idHorario,
+                ha.intSemana,
+                ha.horaDesde,
+                ha.horaHasta,
+                li.nombre AS nombreLista
+            FROM actividades a
+            INNER JOIN horarios_actividades ha
+                ON ha.idActividad = a.id
+            LEFT JOIN listas li
+                ON li.id = a.idLista
+            WHERE a.idUsuario = ?
+                AND (
+                    ha.intSemana <> ?
+                    OR ha.horaHasta > ?
+                )
+            ORDER BY
+                (ha.intSemana - ? + 7) % 7,
+                ha.horaDesde
+            LIMIT 3
+        `;
+
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            diaActual,
+            horaActual,
+            diaActual
+        ]);
+
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export async function getActividadById(idActividad, idUsuario) {
     try {
         const query = `SELECT 

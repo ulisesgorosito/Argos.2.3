@@ -1,10 +1,18 @@
-import { getActividades } from "../models/actividadesModel.js";
+import { getActividadesDashboard } from "../models/actividadesModel.js";
 import { getRegistrosDeListasDashboard } from "../models/listasModel.js";
 
 export async function obtenerActividadesYListas(idUsuario) {
+    const ahora = new Date();
+    const diaActual = ahora.getDay();
+    const horaActual = [
+        String(ahora.getHours()).padStart(2, "0"),
+        String(ahora.getMinutes()).padStart(2, "0"),
+        String(ahora.getSeconds()).padStart(2, "0")
+    ].join(":");
+
     const [registros, filasActividades] = await Promise.all([
         getRegistrosDeListasDashboard(idUsuario),
-        getActividades(idUsuario)
+        getActividadesDashboard(idUsuario, diaActual, horaActual)
     ]);
 
     const listas = new Map();
@@ -44,89 +52,79 @@ export async function obtenerActividadesYListas(idUsuario) {
                 nombre: fila.nombre,
                 descripcion: fila.descripcion,
                 idLista: fila.idLista,
-                nombreLista: fila.nombreLista,
-                horarios: []
+                horarios: [],
+                proximoHorario: null
             });
         }
 
+        const actividad = actividades.get(fila.id);
+
         if (fila.idHorario !== null) {
-            actividades.get(fila.id).horarios.push({
+            const horario = {
                 id: fila.idHorario,
                 intSemana: fila.intSemana,
                 horaDesde: fila.horaDesde,
                 horaHasta: fila.horaHasta
-            });
+            };
+
+            actividad.horarios.push(horario);
+
+            if (actividad.proximoHorario === null) {
+                actividad.proximoHorario = horario;
+            }
         }
     }
 
-    const actividadesAgrupadas = [...actividades.values()];
-    const ahora = new Date();
-    const diaActual = ahora.getDay();
-    const horaActual = ahora.getHours() * 60 + ahora.getMinutes();
-
-    const obtenerMinutos = hora => {
-        const [horas, minutos] = String(hora)
-            .split(":")
-            .map(Number);
-
-        return horas * 60 + minutos;
-    };
-
-    const obtenerProximoHorario = horarios => {
-        let proximo = null;
-        let menorDiferencia = Infinity;
-
-        for (const horario of horarios) {
-            if (horario.intSemana === null) continue;
-
-            let dias = (horario.intSemana - diaActual + 7) % 7;
-            const minutos = obtenerMinutos(horario.horaDesde);
-
-            if (dias === 0 && minutos <= horaActual) {
-                dias = 7;
-            }
-
-            const diferencia = dias * 1440 + minutos;
-
-            if (diferencia < menorDiferencia) {
-                menorDiferencia = diferencia;
-                proximo = horario;
-            }
-        }
-
-        return proximo;
-    };
-
-    const actividadesHoy = actividadesAgrupadas
-        .filter(actividad =>
-            actividad.horarios.some(
-                horario => horario.intSemana === diaActual
-            )
-        )
-        .map(actividad => ({
-            id: actividad.id,
-            nombre: actividad.nombre,
-            descripcion: actividad.descripcion,
-            horarios: actividad.horarios.filter(
-                horario => horario.intSemana === diaActual
-            ),
-            lista: actividad.idLista
-                ? listas.get(actividad.idLista) ?? null
-                : null
-        }))
-        .sort((a, b) =>
-            obtenerMinutos(a.horarios[0].horaDesde) -
-            obtenerMinutos(b.horarios[0].horaDesde)
-        );
+    const actividadesHoy = [...actividades.values()].map(actividad => ({
+        id: actividad.id,
+        nombre: actividad.nombre,
+        descripcion: actividad.descripcion,
+        horarios: actividad.horarios,
+        proximoHorario: actividad.proximoHorario,
+        lista: actividad.idLista
+            ? listas.get(actividad.idLista) ?? null
+            : null
+    }));
 
     const listasDTO = [...listas.values()].map(lista => {
-        const horarios = actividadesAgrupadas
+        const horarios = filasActividades
             .filter(actividad => actividad.idLista === lista.id)
-            .flatMap(actividad => actividad.horarios);
+            .filter(actividad => actividad.idHorario !== null)
+            .map(actividad => ({
+                id: actividad.idHorario,
+                intSemana: actividad.intSemana,
+                horaDesde: actividad.horaDesde,
+                horaHasta: actividad.horaHasta
+            }));
+
+        const obtenerMinutos = hora => {
+            const [horas, minutos] = String(hora)
+                .split(":")
+                .map(Number);
+
+            return horas * 60 + minutos;
+        };
+
+        const minutosActuales =
+            ahora.getHours() * 60 + ahora.getMinutes();
+
+        const horariosOrdenados = horarios
+            .filter(horario =>
+                horario.intSemana !== diaActual ||
+                obtenerMinutos(horario.horaHasta) > minutosActuales
+            )
+            .sort((a, b) => {
+                const diasA = (a.intSemana - diaActual + 7) % 7;
+                const diasB = (b.intSemana - diaActual + 7) % 7;
+
+                return diasA - diasB ||
+                    obtenerMinutos(a.horaDesde) -
+                    obtenerMinutos(b.horaDesde);
+            });
 
         return {
             ...lista,
-            proximoHorario: obtenerProximoHorario(horarios)
+            proximoHorario: horariosOrdenados[0] ?? null
         };
     });
 
