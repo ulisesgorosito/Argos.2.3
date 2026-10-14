@@ -938,3 +938,485 @@ body.dark-mode {
     color: #ffffff;
     box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
 }
+
+/* =========================================================
+   HOME · DASHBOARD
+   ========================================================= */
+
+.home {
+    padding: 5px 0 10px;
+}
+
+/* ---------------------------------------------------------
+   Título principal
+   --------------------------------------------------------- */
+
+.home > h1 {
+    position: relative;
+
+    margin: 0 0 34px;
+    padding-bottom: 14px;
+
+    color: #2c3e50;
+
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.home > h1::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: 70px;
+    height: 4px;
+
+    border-radius: 4px;
+
+    background: linear-gradient(90deg, #3498db, #6c63ff);
+}
+
+/* ---------------------------------------------------------
+   Secciones
+   --------------------------------------------------------- */
+
+.home section {
+    margin-bottom: 48px;
+}
+
+.home section:last-child {
+    margin-bottom: 0;
+}
+
+.home section > h2 {
+    position: relative;
+
+    margin: 0 0 22px;
+    padding-left: 16px;
+
+    color: #2c3e50;
+
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.home section > h2::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    top: 50%;
+
+    width: 5px;
+    height: 24px;
+
+    border-radius: 3px;
+
+    background: linear-gradient(180deg, #3498db, #2c3e50);
+
+    transform: translateY(-50%);
+}
+
+/* ---------------------------------------------------------
+   Estado vacío
+   --------------------------------------------------------- */
+
+.home section > p {
+    margin: 0;
+
+    padding: 26px 20px;
+
+    border: 1px dashed #d5dee7;
+    border-radius: 12px;
+
+    background: #f8fafc;
+    color: #7f8c8d;
+
+    font-size: 0.95rem;
+    font-style: italic;
+    text-align: center;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.home .card {
+    position: relative;
+    overflow: hidden;
+
+    height: 100%;
+
+    border: 1px solid #e6ecf2;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow: 0 2px 10px rgba(44, 62, 80, 0.06);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+/* Barra superior de acento */
+.home .card::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 4px;
+
+    background: linear-gradient(90deg, #3498db, #2c3e50);
+
+    opacity: 0.75;
+
+    transition: opacity 0.25s ease;
+}
+
+/* Halo decorativo en la esquina */
+.home .card::after {
+    content: "";
+
+    position: absolute;
+    top: -70px;
+    right: -70px;
+
+    width: 160px;
+    height: 160px;
+
+    border-radius: 50%;
+
+    background: radial-gradient(
+        circle,
+        rgba(52, 152, 219, 0.16),
+        transparent 70%
+    );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: opacity 0.3s ease;
+}
+
+.home .card:hover {
+    transform: translateY(-4px);
+
+    border-color: #cfe3f5;
+
+    box-shadow: 0 14px 30px rgba(44, 62, 80, 0.14);
+}
+
+.home .card:hover::before {
+    opacity: 1;
+}
+
+.home .card:hover::after {
+    opacity: 1;
+}
+
+.home .card-body {
+    position: relative;
+    z-index: 1;
+
+    padding: 24px 22px 22px;
+}
+
+/* ---------------------------------------------------------
+   Título de la card
+   --------------------------------------------------------- */
+
+.home .card-body > h3 {
+    margin: 0 0 14px;
+
+    color: #2c3e50;
+
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+/* ---------------------------------------------------------
+   Horarios → pastillas
+   --------------------------------------------------------- */
+
+.home .card-body > p.text-muted.mb-1 {
+    display: inline-block;
+
+    margin: 0 6px 6px 0;
+    padding: 4px 12px;
+
+    border-radius: 999px;
+
+    background: #eef6fd;
+    color: #2980b9 !important;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+
+    transition: background 0.2s ease;
+}
+
+.home .card:hover .card-body > p.text-muted.mb-1 {
+    background: #e2f0fb;
+}
+
+/* ---------------------------------------------------------
+   Contador de registros (listas)
+   --------------------------------------------------------- */
+
+.home .card-body > p.text-muted:not(.mb-1):not(.mb-0) {
+    display: inline-block;
+
+    margin: 0 0 14px;
+    padding: 3px 11px;
+
+    border-radius: 999px;
+
+    background: #eef2f6;
+    color: #64748b !important;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------
+   Separador interno
+   --------------------------------------------------------- */
+
+.home .card hr {
+    margin: 16px 0 14px;
+
+    border: 0;
+    border-top: 1px dashed #dfe6ee;
+
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------
+   Subtítulo de lista dentro de la card
+   --------------------------------------------------------- */
+
+.home .card h4 {
+    margin: 0 0 10px;
+
+    color: #94a3b8;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------
+   Registros → lista con viñeta
+   --------------------------------------------------------- */
+
+.home .card-body > p.mb-1:not(.text-muted) {
+    position: relative;
+
+    margin: 0 0 7px;
+    padding-left: 18px;
+
+    color: #4a5568;
+
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.home .card-body > p.mb-1:not(.text-muted)::before {
+    content: "";
+
+    position: absolute;
+    left: 4px;
+    top: 0.55em;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #3498db;
+
+    opacity: 0.65;
+}
+
+.home .card-body > p.mb-1:not(.text-muted):last-of-type {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------
+   Pie de card: próximo horario / sin programar
+   --------------------------------------------------------- */
+
+.home .card-body > p.mb-0 {
+    margin: 0;
+    padding: 10px 14px;
+
+    border-radius: 10px;
+
+    background: #f1f8fe;
+    color: #2980b9;
+
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.home .card-body > p.text-muted.mb-0 {
+    background: #f6f7f9;
+    color: #94a3b8 !important;
+
+    font-weight: 500;
+}
+
+/* =========================================================
+   HOME · DARK MODE
+   ========================================================= */
+
+.dark-mode .home > h1 {
+    color: #f0f0ff;
+}
+
+.dark-mode .home > h1::after {
+    background: linear-gradient(90deg, #6c63ff, #3498db);
+}
+
+.dark-mode .home section > h2 {
+    color: #e8e8ff;
+}
+
+.dark-mode .home section > h2::before {
+    background: linear-gradient(180deg, #6c63ff, #3498db);
+}
+
+.dark-mode .home section > p {
+    border-color: #2f2f4d;
+    background: #15152a;
+    color: #8888a8;
+}
+
+/* --- Cards --- */
+
+.dark-mode .home .card {
+    border-color: #262640;
+    background: #16162a;
+
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.dark-mode .home .card::before {
+    background: linear-gradient(90deg, #6c63ff, #3498db);
+}
+
+.dark-mode .home .card::after {
+    background: radial-gradient(
+        circle,
+        rgba(108, 99, 255, 0.22),
+        transparent 70%
+    );
+}
+
+.dark-mode .home .card:hover {
+    border-color: #3d3d6b;
+
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+}
+
+.dark-mode .home .card-body > h3 {
+    color: #f0f0ff;
+}
+
+/* --- Pastillas de horarios --- */
+
+.dark-mode .home .card-body > p.text-muted.mb-1 {
+    background: rgba(52, 152, 219, 0.15);
+    color: #7db8ff !important;
+}
+
+.dark-mode .home .card:hover .card-body > p.text-muted.mb-1 {
+    background: rgba(52, 152, 219, 0.25);
+}
+
+/* --- Contador de registros --- */
+
+.dark-mode .home .card-body > p.text-muted:not(.mb-1):not(.mb-0) {
+    background: #22223a;
+    color: #9a9ac0 !important;
+}
+
+/* --- Separador --- */
+
+.dark-mode .home .card hr {
+    border-top-color: #2c2c48;
+}
+
+/* --- Subtítulo --- */
+
+.dark-mode .home .card h4 {
+    color: #8888a8;
+}
+
+/* --- Registros --- */
+
+.dark-mode .home .card-body > p.mb-1:not(.text-muted) {
+    color: #c8c8e0;
+}
+
+.dark-mode .home .card-body > p.mb-1:not(.text-muted)::before {
+    background: #6c63ff;
+
+    opacity: 0.85;
+}
+
+/* --- Pie de card --- */
+
+.dark-mode .home .card-body > p.mb-0 {
+    background: rgba(108, 99, 255, 0.14);
+    color: #a9a3ff;
+}
+
+.dark-mode .home .card-body > p.text-muted.mb-0 {
+    background: #1d1d33;
+    color: #8888a8 !important;
+}
+
+/* =========================================================
+   HOME · RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .home > h1 {
+        margin-bottom: 26px;
+        font-size: 1.6rem;
+    }
+
+    .home section {
+        margin-bottom: 36px;
+    }
+
+    .home section > h2 {
+        margin-bottom: 18px;
+        font-size: 1.15rem;
+    }
+
+    .home .card-body {
+        padding: 20px 18px;
+    }
+
+    .home .card:hover {
+        transform: none;
+    }
+}

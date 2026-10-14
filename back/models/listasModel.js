@@ -23,6 +23,50 @@ export async function getListas(idUsuario) {
     }
 }
 
+export async function getRegistrosDeListasDashboard(idUsuario) {
+    try {
+        const query = `
+            SELECT
+                l.id AS idLista,
+                l.nombre AS nombreLista,
+                rl.id AS idRegistroLista,
+                rl.orderInt,
+                r.id AS idRegistro,
+                r.titulo,
+                autoria.autorias
+            FROM listas l
+            LEFT JOIN registros_listas rl
+                ON rl.idLista = l.id
+            LEFT JOIN registros r
+                ON r.id = rl.idRegistro
+            LEFT JOIN historiales_lectura hl
+                ON r.id = hl.idRegistro    
+            LEFT JOIN (
+                SELECT
+                    ra.idRegistro,
+                    GROUP_CONCAT(
+                        DISTINCT a.apellido
+                        ORDER BY a.apellido
+                        SEPARATOR ', '
+                    ) AS autorias
+                FROM registros_autorias ra
+                INNER JOIN autorias a
+                    ON a.id = ra.idAutoria
+                GROUP BY ra.idRegistro
+            ) autoria
+                ON autoria.idRegistro = r.id
+            WHERE l.idUsuario = ?
+            ORDER BY l.favorita desc, rl.orderInt
+        `;
+
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export async function getRegistrosDeLista(idLista, idUsuario) {
     try {
         const query = `

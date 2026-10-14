@@ -14,6 +14,7 @@ export async function getActividades(idUsuario) {
             ha.intSemana,
             ha.horaDesde,
             ha.horaHasta,
+            li.id AS idLista,
             li.nombre AS nombreLista
         FROM actividades a
         LEFT JOIN horarios_actividades ha
