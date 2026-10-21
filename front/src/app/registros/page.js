@@ -70,11 +70,17 @@ export default function RegistrosPage() {
     const [elemento, setElemento] = useState(null);
     const [modalAbierto, setModalAbierto] = useState(false);
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+
     const cargarRegistros = async () => {
         try {
-            const registros = await obtener("/registros");
-            console.log("REGISTROS:", registros);
-            setRegistros(registros);
+            const respuesta = await obtener(
+                `/registros?searchTerm=${encodeURIComponent(searchTerm)}&pagina=${pagina}`
+            );
+            setRegistros(respuesta.registros);
+            setTotalPaginas(respuesta.totalPaginas);
         } catch (error) {
             console.error(error);
         }
@@ -82,8 +88,11 @@ export default function RegistrosPage() {
 
     const cargarTiposRegistros = async () => {
         try {
-            const tiposRegistros = await obtener("/tiposRegistro");
-            setTiposRegistros(tiposRegistros);
+            const respuesta = await obtener(
+                `/tiposRegistro?searchTerm=${encodeURIComponent(searchTerm)}&pagina=${pagina}`
+            );
+            setTiposRegistros(respuesta.tiposRegistros);
+            setTotalPaginas(respuesta.totalPaginas);
         } catch (error) {
             console.error(error);
         }
@@ -91,16 +100,14 @@ export default function RegistrosPage() {
 
     const cargarAutorias = async () => {
         try {
-            const autorias = await obtener("/autorias");
-            setAutorias(autorias);
+            const respuesta = await obtener(
+                `/autorias?searchTerm=${encodeURIComponent(searchTerm)}&pagina=${pagina}`
+            );
+            setAutorias(respuesta.autorias);
+            setTotalPaginas(respuesta.totalPaginas);
         } catch (error) {
             console.error(error);
         }
-    };
-
-    const handleNuevo = async () => {
-        setElemento(null);
-        setModalAbierto(true);
     };
 
     const onSave = async () => {
@@ -114,8 +121,17 @@ export default function RegistrosPage() {
     };
 
     useEffect(() => {
+        setPagina(1);
+    }, [searchTerm, seccion]);
+
+    useEffect(() => {
         onSave();
-    }, [seccion]);
+    }, [seccion, searchTerm, pagina]);
+
+    const handleNuevo = async () => {
+        setElemento(null);
+        setModalAbierto(true);
+    };
 
     const handleEditar = async (elemento) => {
         setElemento(elemento);
@@ -206,12 +222,23 @@ export default function RegistrosPage() {
                 </button>
             </div>
 
+            <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
             <Tabla
                 data={data}
                 columns={columns}
                 onEdit={handleEditar}
                 onDelete={handleEliminar}
                 canModify={seccion === "tipos" ? puedeEditarTipoRegistro : undefined}
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onPageChange={setPagina}
             />
 
             {modalAbierto && seccion === "registros" && (

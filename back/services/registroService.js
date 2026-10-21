@@ -1,7 +1,7 @@
 import {
     deleteRegistroAutorias, deleteRegistroListas, deleteRegistroTemas, getRegistroById,
     getRegistros, insertRegistro, insertRegistroAutoria, insertRegistroLista,
-    insertRegistroTema, updateRegistro, getRegistrosSimple
+    insertRegistroTema, updateRegistro, getRegistrosSimple, countRegistros
 } from "../models/registrosModel.js";
 import { randomUUID } from "crypto";
 
@@ -73,8 +73,10 @@ export async function actualizarRegistro(obj, idRegistro, idUsuario) {
     }
 }
 
-export async function obtenerRegistros(idUsuario) {
-    const rows = await getRegistros(idUsuario);
+export async function obtenerRegistros(idUsuario, searchTerm = "", pagina = 1) {
+    const limite = 20;
+    const rows = await getRegistros(idUsuario, searchTerm, pagina, limite);
+    const total = await countRegistros(idUsuario, searchTerm);
 
     const registros = Object.values(
         rows.reduce((registrosAgrupados, registro) => {
@@ -122,7 +124,10 @@ export async function obtenerRegistros(idUsuario) {
         }, {})
     );
 
-    return registros;
+    return {
+        totalPaginas: Math.ceil(total / limite),
+        registros
+    };
 }
 
 export async function obtenerRegistrosDropdown(idUsuario) {

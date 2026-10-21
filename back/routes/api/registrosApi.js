@@ -7,9 +7,11 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const response = await obtenerRegistros(idUsuario);
+        const { searchTerm = "", pagina = 1 } = req.query;
+        const response = await obtenerRegistros(idUsuario, searchTerm, Number(pagina));
         res.json(response);
     } catch (error) {
+        console.log(error);
         next(error);
     }
 });

@@ -1,7 +1,6 @@
 const express = require('express');
-
+const { obtenerAutorias } = require('../../services/autoriaService');
 const {
-    getAutorias,
     insertAutoria,
     updateAutoria,
     deleteAutoriaById
@@ -13,7 +12,7 @@ router.get('/', async function (req, res, next) {
     try {
         const idUsuario = req.session.id_usuario;
 
-        const autorias = await getAutorias(idUsuario);
+        const autorias = await obtenerAutorias(idUsuario);
 
         res.json(autorias);
     }

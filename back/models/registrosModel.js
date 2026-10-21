@@ -48,35 +48,104 @@ export async function getRegistrosSimple(idUsuario) {
     }
 }
 
-export async function getRegistros(idUsuario) {
+export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limite) {
     try {
-        const query = `SELECT
-            r.id,
-            r.idTipoRegistro,
-            r.titulo,
-            r.subtitulo,
-            r.paginas,
-            r.fechaPublicacionOriginal,
-            r.fechaEdicion,
-            r.editorialRevista,
-            tr.nombre AS tipoRegistro,
-            a.id AS idAutoria,
-            a.apellido AS autoria,
-            t.id AS idTema,
-            t.nombre AS tema
-            from registros r
-            left join registros_autorias ra ON ra.idRegistro = r.id
-            left join registros_temas rt ON rt.idRegistro = r.id
-            left join tipos_registros tr ON tr.id = r.idTipoRegistro
-            left join autorias a ON a.id = ra.idAutoria
-            left join temas t ON t.id = rt.idTema
-            WHERE r.idUsuario IS NULL
-            OR r.idUsuario = ?`;
+        const offset = (pagina - 1) * limite;
 
-        const [rows] = await pool.query(query, [idUsuario]);
+        const query = `
+            SELECT
+                r.id,
+                r.idTipoRegistro,
+                r.titulo,
+                r.subtitulo,
+                r.paginas,
+                r.fechaPublicacionOriginal,
+                r.fechaEdicion,
+                r.editorialRevista,
+                tr.nombre AS tipoRegistro,
+                a.id AS idAutoria,
+                a.apellido AS autoria,
+                t.id AS idTema,
+                t.nombre AS tema
+            FROM (
+                SELECT r.id
+                FROM registros r
+                LEFT JOIN tipos_registros tr ON tr.id = r.idTipoRegistro
+                LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
+                LEFT JOIN autorias a ON a.id = ra.idAutoria
+                LEFT JOIN registros_temas rt ON rt.idRegistro = r.id
+                LEFT JOIN temas t ON t.id = rt.idTema
+                WHERE (r.idUsuario IS NULL OR r.idUsuario = ?)
+                AND (
+                    r.titulo LIKE ?
+                    OR r.subtitulo LIKE ?
+                    OR tr.nombre LIKE ?
+                    OR a.apellido LIKE ?
+                    OR t.nombre LIKE ?
+                )
+                GROUP BY r.id
+                ORDER BY r.titulo
+                LIMIT ? OFFSET ?
+            ) registrosPaginados
+            JOIN registros r ON r.id = registrosPaginados.id
+            LEFT JOIN tipos_registros tr ON tr.id = r.idTipoRegistro
+            LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
+            LEFT JOIN autorias a ON a.id = ra.idAutoria
+            LEFT JOIN registros_temas rt ON rt.idRegistro = r.id
+            LEFT JOIN temas t ON t.id = rt.idTema
+            ORDER BY r.titulo`;
+
+        const parametros = [
+            idUsuario,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            limite,
+            offset
+        ];
+
+        const [rows] = await pool.query(query, parametros);
         return rows;
     } catch (error) {
         console.log(error);
+        throw error;
+    }
+}
+
+export async function countRegistros(idUsuario, searchTerm = "") {
+    try {
+        const query = `
+            SELECT COUNT(DISTINCT r.id) AS total
+            FROM registros r
+            LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
+            LEFT JOIN registros_temas rt ON rt.idRegistro = r.id
+            LEFT JOIN tipos_registros tr ON tr.id = r.idTipoRegistro
+            LEFT JOIN autorias a ON a.id = ra.idAutoria
+            LEFT JOIN temas t ON t.id = rt.idTema
+            WHERE (r.idUsuario IS NULL OR r.idUsuario = ?)
+            AND (
+                r.titulo LIKE ?
+                OR r.subtitulo LIKE ?
+                OR tr.nombre LIKE ?
+                OR a.apellido LIKE ?
+                OR t.nombre LIKE ?
+            )`;
+
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`
+        ]);
+
+        return rows[0].total;
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }
 

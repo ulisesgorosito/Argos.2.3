@@ -32,7 +32,7 @@ export default function RegistroModal({ registro, onClose, onSave }) {
         async function cargarTodo() {
             const [tipos, autorias, temas] = await Promise.all([
                 obtener("/tiposRegistro"),
-                obtener("/autorias"),
+                obtener("/dropdown/autorias"),
                 obtener("/temas")
             ]);
 

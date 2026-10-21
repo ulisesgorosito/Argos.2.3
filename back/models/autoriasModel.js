@@ -11,6 +11,19 @@ export async function getAutorias(idUsuario) {
     }
 }
 
+export async function getAutoriasDropdown(idUsuario) {
+    try {
+        const query = `SELECT id, nombre, apellido FROM autorias WHERE idUsuario = ?
+        order by apellido, nombre`;
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
 export async function getAutoriaById(idAutoria, idUsuario) {
     try {
         const query = "SELECT * FROM autorias WHERE id = ? AND idUsuario = ?";
