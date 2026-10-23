@@ -221,3 +221,15 @@ export async function sincronizarRegistrosLista(idLista, registros, idUsuario) {
         connection.release();
     }
 }
+
+export async function getListasDropdown(idUsuario) {
+    try {
+        const query = `SELECT id, nombre FROM listas WHERE idUsuario = ?
+        order by nombre`;
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

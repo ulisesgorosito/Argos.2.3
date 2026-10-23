@@ -55,3 +55,14 @@ export async function deleteTemaById(idTema) {
     }
 }
 
+export async function getTemasDropdown(idUsuario) {
+    try {
+        const query = `SELECT id, nombre FROM temas WHERE idUsuario = ?
+        order by nombre`;
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

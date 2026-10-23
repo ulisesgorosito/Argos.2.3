@@ -34,9 +34,6 @@ export async function apiFetch(path, options = {}) {
         }
 
         const data = await response.json();
-
-        console.log(path, data);
-
         return data;
     } catch (error) {
         console.error("Error en apiFetch:", error);

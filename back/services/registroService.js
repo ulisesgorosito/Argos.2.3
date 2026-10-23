@@ -73,10 +73,33 @@ export async function actualizarRegistro(obj, idRegistro, idUsuario) {
     }
 }
 
-export async function obtenerRegistros(idUsuario, searchTerm = "", pagina = 1) {
+export async function obtenerRegistros(
+    idUsuario,
+    searchTerm = "",
+    pagina = 1,
+    idsTemas = [],
+    idsTiposRegistros = [],
+    idsListas = []
+) {
     const limite = 20;
-    const rows = await getRegistros(idUsuario, searchTerm, pagina, limite);
-    const total = await countRegistros(idUsuario, searchTerm);
+
+    const rows = await getRegistros(
+        idUsuario,
+        searchTerm,
+        pagina,
+        limite,
+        idsTemas,
+        idsTiposRegistros,
+        idsListas
+    );
+
+    const total = await countRegistros(
+        idUsuario,
+        searchTerm,
+        idsTemas,
+        idsTiposRegistros,
+        idsListas
+    );
 
     const registros = Object.values(
         rows.reduce((registrosAgrupados, registro) => {

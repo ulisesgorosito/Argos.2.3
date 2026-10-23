@@ -7,8 +7,23 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const { searchTerm = "", pagina = 1 } = req.query;
-        const response = await obtenerRegistros(idUsuario, searchTerm, Number(pagina));
+        const {
+            searchTerm = "",
+            pagina = 1,
+            idsTemas = "",
+            idsTiposRegistros = "",
+            idsListas = ""
+        } = req.query;
+
+        const response = await obtenerRegistros(
+            idUsuario,
+            searchTerm,
+            Number(pagina),
+            idsTemas ? idsTemas.split(",").filter(Boolean) : [],
+            idsTiposRegistros ? idsTiposRegistros.split(",").filter(Boolean) : [],
+            idsListas ? idsListas.split(",").filter(Boolean) : []
+        );
+
         res.json(response);
     } catch (error) {
         console.log(error);
@@ -50,7 +65,7 @@ router.put('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try {
-         const idUsuario = req.session.id_usuario;
+        const idUsuario = req.session.id_usuario;
         await deleteRegistroById(req.params.id, idUsuario);
 
         res.json({ message: 'Registro eliminado correctamente' });

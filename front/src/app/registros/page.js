@@ -8,8 +8,14 @@ import RegistroModal from "@/components/registros/RegistroModal";
 import TipoRegistroModal from "@/components/tiposRegistros/TipoRegistroModal";
 
 import { extraerAnio } from "@/utils/dateUtil";
+import RegistroFiltro from "@/components/registros/RegistroFiltro";
 
 const columnsRegistros = [
+     {
+        key: "autorias",
+        title: "Autoría",
+        render: autorias => autorias.map(autoria => autoria.apellido).join(", ")
+    },
     {
         key: "titulo",
         title: "Titulo"
@@ -27,11 +33,6 @@ const columnsRegistros = [
         key: "fechaEdicion",
         title: "Año Edición",
         render: fecha => extraerAnio(fecha)
-    },
-    {
-        key: "autorias",
-        title: "Autoría",
-        render: autorias => autorias.map(autoria => autoria.apellido).join(", ")
     },
     {
         key: "temas",
@@ -74,11 +75,22 @@ export default function RegistrosPage() {
     const [pagina, setPagina] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
 
+    const [filtrosRegistros, setFiltrosRegistros] = useState({
+        idsTemas: [],
+        idsTiposRegistros: [],
+        idsListas: []
+    });
+
     const cargarRegistros = async () => {
         try {
-            const respuesta = await obtener(
-                `/registros?searchTerm=${encodeURIComponent(searchTerm)}&pagina=${pagina}`
-            );
+            const parametros = new URLSearchParams({
+                searchTerm,
+                pagina: String(pagina),
+                idsTemas: filtrosRegistros.idsTemas.join(","),
+                idsTiposRegistros: filtrosRegistros.idsTiposRegistros.join(","),
+                idsListas: filtrosRegistros.idsListas.join(",")
+            });
+            const respuesta = await obtener(`/registros?${parametros}`);
             setRegistros(respuesta.registros);
             setTotalPaginas(respuesta.totalPaginas);
         } catch (error) {
@@ -126,7 +138,7 @@ export default function RegistrosPage() {
 
     useEffect(() => {
         onSave();
-    }, [seccion, searchTerm, pagina]);
+    }, [seccion, searchTerm, pagina, filtrosRegistros]);
 
     const handleNuevo = async () => {
         setElemento(null);
@@ -229,6 +241,13 @@ export default function RegistrosPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
+
+            {seccion === "registros" && (
+                <RegistroFiltro
+                    filtros={filtrosRegistros}
+                    onChange={setFiltrosRegistros}
+                />
+            )}
 
             <Tabla
                 data={data}

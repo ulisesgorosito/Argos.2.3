@@ -46,3 +46,15 @@ export async function deleteTipoRegistroById(idTipoRegistro, idUsuario) {
         throw error;
     }
 }
+
+export async function getTiposRegistrosDropdown(idUsuario) {
+    try {
+        const query = `SELECT id, nombre FROM tipos_registros WHERE idUsuario IS NULL OR idUsuario = ?
+        order by nombre`;
+        const [rows] = await pool.query(query, [idUsuario]);
+        return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

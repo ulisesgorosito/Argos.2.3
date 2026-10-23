@@ -1,4 +1,4 @@
-import { deleteLista, getListas,getRegistrosDeLista, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
+import { deleteLista, getListas,getListasDropdown,getRegistrosDeLista, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
 
 export async function nuevaLista(obj, idUsuario) {
     try {
@@ -92,4 +92,9 @@ export async function actualizarRegistrosLista(idLista, idsRegistros, idUsuario)
         console.log(error);
         throw error;
     }
+}
+
+export async function obtenerListasDropdown(idUsuario) {
+    const response = await getListasDropdown(idUsuario);
+    return response;
 }

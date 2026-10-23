@@ -48,9 +48,46 @@ export async function getRegistrosSimple(idUsuario) {
     }
 }
 
-export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limite) {
+export async function getRegistros(
+    idUsuario,
+    searchTerm = "",
+    pagina = 1,
+    limite,
+    idsTemas = [],
+    idsTiposRegistros = [],
+    idsListas = []
+) {
     try {
         const offset = (pagina - 1) * limite;
+
+        const condiciones = [];
+        const parametrosFiltros = [];
+
+        if (idsTemas.length > 0) {
+            condiciones.push(`EXISTS (
+                SELECT 1
+                FROM registros_temas rtFiltro
+                WHERE rtFiltro.idRegistro = r.id
+                AND rtFiltro.idTema IN (${idsTemas.map(() => "?").join(", ")})
+            )`);
+            parametrosFiltros.push(...idsTemas);
+        }
+
+        if (idsTiposRegistros.length > 0) {
+            condiciones.push(`r.idTipoRegistro IN (${idsTiposRegistros.map(() => "?").join(", ")})`);
+            parametrosFiltros.push(...idsTiposRegistros);
+        }
+
+        if (idsListas.length > 0) {
+            condiciones.push(`EXISTS (
+                SELECT 1
+                FROM registros_listas rl
+                JOIN listas l ON l.id = rl.idLista
+                WHERE rl.idRegistro = r.id
+                AND l.id IN (${idsListas.map(() => "?").join(", ")})
+            )`);
+            parametrosFiltros.push(...idsListas);
+        }
 
         const query = `
             SELECT
@@ -68,7 +105,9 @@ export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limit
                 t.id AS idTema,
                 t.nombre AS tema
             FROM (
-                SELECT r.id
+                SELECT
+                    r.id,
+                    MIN(a.apellido) AS apellidoOrden
                 FROM registros r
                 LEFT JOIN tipos_registros tr ON tr.id = r.idTipoRegistro
                 LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
@@ -83,8 +122,17 @@ export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limit
                     OR a.apellido LIKE ?
                     OR t.nombre LIKE ?
                 )
+                ${condiciones.length > 0 ? `AND ${condiciones.join(" AND ")}` : ""}
                 GROUP BY r.id
-                ORDER BY r.titulo
+                ORDER BY
+                    apellidoOrden,
+                    (SELECT r2.fechaPublicacionOriginal
+                     FROM registros r2
+                     WHERE r2.id = r.id) IS NULL,
+                    (SELECT r2.fechaPublicacionOriginal
+                     FROM registros r2
+                     WHERE r2.id = r.id),
+                    r.titulo
                 LIMIT ? OFFSET ?
             ) registrosPaginados
             JOIN registros r ON r.id = registrosPaginados.id
@@ -93,7 +141,11 @@ export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limit
             LEFT JOIN autorias a ON a.id = ra.idAutoria
             LEFT JOIN registros_temas rt ON rt.idRegistro = r.id
             LEFT JOIN temas t ON t.id = rt.idTema
-            ORDER BY r.titulo`;
+            ORDER BY
+                registrosPaginados.apellidoOrden,
+                r.fechaPublicacionOriginal IS NULL,
+                r.fechaPublicacionOriginal,
+                r.titulo`;
 
         const parametros = [
             idUsuario,
@@ -102,6 +154,7 @@ export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limit
             `%${searchTerm}%`,
             `%${searchTerm}%`,
             `%${searchTerm}%`,
+            ...parametrosFiltros,
             limite,
             offset
         ];
@@ -114,8 +167,43 @@ export async function getRegistros(idUsuario, searchTerm = "", pagina = 1, limit
     }
 }
 
-export async function countRegistros(idUsuario, searchTerm = "") {
+export async function countRegistros(
+    idUsuario,
+    searchTerm = "",
+    idsTemas = [],
+    idsTiposRegistros = [],
+    idsListas = []
+) {
     try {
+        const condiciones = [];
+        const parametrosFiltros = [];
+
+        if (idsTemas.length > 0) {
+            condiciones.push(`EXISTS (
+                SELECT 1
+                FROM registros_temas rtFiltro
+                WHERE rtFiltro.idRegistro = r.id
+                AND rtFiltro.idTema IN (${idsTemas.map(() => "?").join(", ")})
+            )`);
+            parametrosFiltros.push(...idsTemas);
+        }
+
+        if (idsTiposRegistros.length > 0) {
+            condiciones.push(`r.idTipoRegistro IN (${idsTiposRegistros.map(() => "?").join(", ")})`);
+            parametrosFiltros.push(...idsTiposRegistros);
+        }
+
+        if (idsListas.length > 0) {
+            condiciones.push(`EXISTS (
+                SELECT 1
+                FROM registros_listas rl
+                JOIN listas l ON l.id = rl.idLista
+                WHERE rl.idRegistro = r.id
+                AND l.id IN (${idsListas.map(() => "?").join(", ")})
+            )`);
+            parametrosFiltros.push(...idsListas);
+        }
+
         const query = `
             SELECT COUNT(DISTINCT r.id) AS total
             FROM registros r
@@ -131,7 +219,8 @@ export async function countRegistros(idUsuario, searchTerm = "") {
                 OR tr.nombre LIKE ?
                 OR a.apellido LIKE ?
                 OR t.nombre LIKE ?
-            )`;
+            )
+            ${condiciones.length > 0 ? `AND ${condiciones.join(" AND ")}` : ""}`;
 
         const [rows] = await pool.query(query, [
             idUsuario,
@@ -139,7 +228,8 @@ export async function countRegistros(idUsuario, searchTerm = "") {
             `%${searchTerm}%`,
             `%${searchTerm}%`,
             `%${searchTerm}%`,
-            `%${searchTerm}%`
+            `%${searchTerm}%`,
+            ...parametrosFiltros
         ]);
 
         return rows[0].total;
