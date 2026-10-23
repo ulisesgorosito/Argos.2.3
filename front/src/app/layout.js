@@ -25,10 +25,10 @@ export default async function RootLayout({ children }) {
         if (response.ok) {
             user = await response.json();
             console.log(user);
+        } else if (response.status !== 401) {
+            console.error("Error verificando sesión:", response.status, response.statusText);
         }
-        else {
-            console.error("Error verificando sesión:", response.status, response.statusText, response);
-        }
+        
     } catch (error) {
         console.error("Error verificando sesión:", error);
     }

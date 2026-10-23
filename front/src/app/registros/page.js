@@ -89,10 +89,10 @@ export default function RegistrosPage() {
     const cargarTiposRegistros = async () => {
         try {
             const respuesta = await obtener(
-                `/tiposRegistro?searchTerm=${encodeURIComponent(searchTerm)}&pagina=${pagina}`
+                `/tiposRegistro?pagina=${pagina}`
             );
-            setTiposRegistros(respuesta.tiposRegistros);
-            setTotalPaginas(respuesta.totalPaginas);
+            setTiposRegistros(respuesta);
+            setTotalPaginas(respuesta);
         } catch (error) {
             console.error(error);
         }

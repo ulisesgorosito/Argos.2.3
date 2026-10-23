@@ -5,16 +5,18 @@ var router = express.Router();
 
 router.get('/', function (req, res, next) {
     res.render('admin/login', {
-        layout: 'layout',     
-        hideNav: true         
+        layout: 'layout',
+        hideNav: true
     });
 });
 
 router.post('/', async function (req, res, next) {
     try {
+        console.log('LOGIN POST RECIBIDO');
         const { usuario, password } = req.body;
+        console.log('LOGIN - Usuario recibido:', usuario);
         const user = await usuariosModel.getUser(usuario, password);
-          console.log("USUARIO ANTES DE SESION:", user);
+        console.log("USUARIO ANTES DE SESION:", user);
         if (user) {
             req.session.id_usuario = user.id;
             req.session.user_name = user.userName;
