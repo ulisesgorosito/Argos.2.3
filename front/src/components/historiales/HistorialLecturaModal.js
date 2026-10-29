@@ -19,7 +19,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
         const cargarRegistros = async () => {
             try {
                 setCargandoRegistros(true);
-                const registros = await obtener("/registros");
+                const registros = await obtener("/dropdown/registros");
                 setRegistros(registros);
             } catch (error) {
                 console.error(error);

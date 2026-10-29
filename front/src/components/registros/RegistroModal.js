@@ -33,7 +33,7 @@ export default function RegistroModal({ registro, onClose, onSave }) {
             const [tipos, autorias, temas] = await Promise.all([
                 obtener("/tiposRegistro"),
                 obtener("/dropdown/autorias"),
-                obtener("/temas")
+                obtener("/dropdown/temas")
             ]);
 
             setTiposRegistro(tipos);
@@ -348,7 +348,9 @@ export default function RegistroModal({ registro, onClose, onSave }) {
                                 .filter((autoria) => !idsAutoria.includes(autoria.id))
                                 .map((autoria) => (
                                     <option key={autoria.id} value={autoria.id}>
-                                        {autoria.nombre} {autoria.apellido}
+                                        {[autoria.apellido, autoria.nombre]
+                                            .filter((valor) => valor.trim() !== "")
+                                            .join(", ")}
                                     </option>
                                 ))}
                         </select>
@@ -365,7 +367,7 @@ export default function RegistroModal({ registro, onClose, onSave }) {
                                         className="badge bg-secondary d-flex align-items-center gap-2"
                                     >
                                         {autoria
-                                            ? `${autoria.nombre} ${autoria.apellido}`
+                                            ? [autoria.apellido, autoria.nombre].filter((valor) => valor.trim() !== "").join(", ")
                                             : id}
 
                                         <button
