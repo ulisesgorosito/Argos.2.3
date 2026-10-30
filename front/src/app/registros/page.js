@@ -11,7 +11,7 @@ import { extraerAnio } from "@/utils/dateUtil";
 import RegistroFiltro from "@/components/registros/RegistroFiltro";
 
 const columnsRegistros = [
-     {
+    {
         key: "autorias",
         title: "Autoría",
         render: autorias => autorias.map(autoria => autoria.apellido).join(", ")
@@ -54,12 +54,12 @@ const columnsTiposRegistros = [
 
 const columnsAutorias = [
     {
-        key: "nombre",
-        title: "Nombre"
-    },
-    {
         key: "apellido",
         title: "Apellido"
+    },
+    {
+        key: "nombre",
+        title: "Nombre"
     }
 ];
 

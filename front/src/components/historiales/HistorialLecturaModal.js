@@ -256,7 +256,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                             className="mb-3"
                         >
                             <div className="d-flex justify-content-between align-items-center">
-                                <h3>Selección {index + 1}</h3>
+                                <h5>Selección {index + 1}</h5>
 
                                 <button
                                     type="button"

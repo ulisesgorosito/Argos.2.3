@@ -12,7 +12,12 @@ router.get('/', async function (req, res, next) {
     try {
         const idUsuario = req.session.id_usuario;
 
-        const autorias = await obtenerAutorias(idUsuario);
+         const {
+            searchTerm = "",
+            pagina = 1,
+        } = req.query;
+
+        const autorias = await obtenerAutorias(idUsuario, searchTerm, pagina);
 
         res.json(autorias);
     }

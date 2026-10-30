@@ -1,10 +1,54 @@
 import pool from './bd.js';
 
-export async function getAutorias(idUsuario) {
+export async function getAutorias(idUsuario, searchTerm, pagina, limite) {
     try {
-        const query = "SELECT * FROM autorias WHERE idUsuario = ?";
-        const [rows] = await pool.query(query, [idUsuario]);
+        const offset = (pagina - 1) * limite;
+        const query = `
+            SELECT *
+            FROM autorias
+            WHERE idUsuario = ?
+            AND (
+                apellido LIKE ?
+                OR nombre LIKE ?
+            )
+            ORDER BY apellido
+            LIMIT ? OFFSET ?
+        `;
+
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`,
+            limite,
+            offset
+        ]);
+
         return rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function countAutorias(idUsuario, searchTerm) {
+    try {
+        const query = `
+            SELECT COUNT(*) AS total
+            FROM autorias
+            WHERE idUsuario = ?
+            AND (
+                apellido LIKE ?
+                OR nombre LIKE ?
+            )
+        `;
+
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            `%${searchTerm}%`,
+            `%${searchTerm}%`
+        ]);
+
+        return rows[0].total;
     } catch (error) {
         console.log(error);
         throw error;
