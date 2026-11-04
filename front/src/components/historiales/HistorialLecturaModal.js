@@ -13,6 +13,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
     const [dropdownAbierto, setDropdownAbierto] = useState(false);
     const [cargandoRegistros, setCargandoRegistros] = useState(false);
     const [selecciones, setSelecciones] = useState([]);
+
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -38,18 +39,21 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                     ? historial.fechaInicio.substring(0, 10)
                     : ""
             );
+
             setFechaFin(
                 historial.fechaFin
                     ? historial.fechaFin.substring(0, 10)
-                    : null
+                    : ""
             );
+
             setPaginaActual(historial.paginaActual ?? 1);
             setIdRegistro(historial.idRegistro ?? "");
             setSelecciones(historial.selecciones ?? []);
         } else {
             const hoy = new Date().toLocaleDateString("en-CA");
+
             setFechaInicio(hoy);
-            setFechaFin(null);
+            setFechaFin("");
             setPaginaActual(1);
             setIdRegistro("");
             setSelecciones([]);
@@ -81,7 +85,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
         };
     }, []);
 
-    const opcionesFiltradas = registros.filter((registro) =>
+    const opcionesFiltradas = registros.filter(registro =>
         registro.titulo
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
@@ -92,7 +96,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
             registro => registro.id === idRegistro
         );
 
-        setSelecciones([
+        setSelecciones(selecciones => [
             ...selecciones,
             {
                 titulo: registro?.titulo ?? "",
@@ -189,7 +193,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                         Sin resultados
                                     </div>
                                 ) : (
-                                    opcionesFiltradas.map((registro) => (
+                                    opcionesFiltradas.map(registro => (
                                         <button
                                             key={registro.id}
                                             type="button"
@@ -198,14 +202,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                                 setIdRegistro(registro.id);
                                                 setSearchTerm(registro.titulo);
                                                 setDropdownAbierto(false);
-
-                                                if (selecciones.length === 0) {
-                                                    setSelecciones([{
-                                                        titulo: registro.titulo,
-                                                        primeraPagina: 1,
-                                                        ultimaPagina: registro.paginas ?? 0
-                                                    }]);
-                                                }
+                                                setSelecciones([]);
                                             }}
                                         >
                                             <div className="fw-semibold">
@@ -262,12 +259,15 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                     type="button"
                                     className="btn btn-outline-danger btn-sm"
                                     onClick={() =>
-                                        setSelecciones(selecciones.filter((_, i) => i !== index))
+                                        setSelecciones(selecciones =>
+                                            selecciones.filter((_, i) => i !== index)
+                                        )
                                     }
                                 >
                                     <i className="bi bi-trash"></i> Quitar
                                 </button>
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor={`titulo-${index}`}>Título</label>
                                 <input
@@ -275,11 +275,13 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                     type="text"
                                     value={seleccion.titulo}
                                     onChange={(event) =>
-                                        setSelecciones(selecciones.map((item, i) =>
-                                            i === index
-                                                ? { ...item, titulo: event.target.value }
-                                                : item
-                                        ))
+                                        setSelecciones(selecciones =>
+                                            selecciones.map((item, i) =>
+                                                i === index
+                                                    ? { ...item, titulo: event.target.value }
+                                                    : item
+                                            )
+                                        )
                                     }
                                     required
                                 />
@@ -294,11 +296,13 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                     type="number"
                                     value={seleccion.primeraPagina}
                                     onChange={(event) =>
-                                        setSelecciones(selecciones.map((item, i) =>
-                                            i === index
-                                                ? { ...item, primeraPagina: event.target.value }
-                                                : item
-                                        ))
+                                        setSelecciones(selecciones =>
+                                            selecciones.map((item, i) =>
+                                                i === index
+                                                    ? { ...item, primeraPagina: event.target.value }
+                                                    : item
+                                            )
+                                        )
                                     }
                                     required
                                 />
@@ -313,11 +317,13 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                     type="number"
                                     value={seleccion.ultimaPagina}
                                     onChange={(event) =>
-                                        setSelecciones(selecciones.map((item, i) =>
-                                            i === index
-                                                ? { ...item, ultimaPagina: event.target.value }
-                                                : item
-                                        ))
+                                        setSelecciones(selecciones =>
+                                            selecciones.map((item, i) =>
+                                                i === index
+                                                    ? { ...item, ultimaPagina: event.target.value }
+                                                    : item
+                                            )
+                                        )
                                     }
                                     required
                                 />

@@ -5,7 +5,7 @@ export async function nuevoHistorial(obj, idUsuario) {
     try {
         const { selecciones, ...historial } = obj;
         historial.id = crypto.randomUUID();
-
+        historial.fechaFin = historial.fechaFin || null;
         const rows = await insertHistorial(historial, idUsuario);
 
         for (const seleccion of selecciones) {
@@ -42,9 +42,10 @@ export async function actualizarHistorial(obj, idHistorial, idUsuario) {
     }
 }
 
-export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
+export async function obtenerHistoriales(idUsuario, pagina) {
     try {
-        const rows = await getHistorialesLectura(idUsuario, fechaInicio, fechaFin);
+        const limite = 20;
+        const rows = await getHistorialesLectura(idUsuario, pagina, limite);
 
         const historiales = [];
 
@@ -58,6 +59,7 @@ export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
                     fechaFin: row.fechaFin,
                     idRegistro: row.idRegistro,
                     paginaActual: row.paginaActual,
+                    porcentajeAvance: 0,
                     registro: {
                         titulo: row.titulo,
                         subtitulo: row.subtitulo,
@@ -65,18 +67,69 @@ export async function obtenerHistoriales(idUsuario, fechaInicio, fechaFin) {
                             ? new Date(row.fechaPublicacionOriginal).getFullYear()
                             : null,
                         autorias: []
-                    }
+                    },
+                    selecciones: [],
+                    paginasTotales: row.paginas
                 };
 
                 historiales.push(historial);
             }
 
             if (row.nombre || row.apellido) {
-                historial.registro.autorias.push({
-                    nombre: row.nombre,
-                    apellido: row.apellido
+                if (!historial.registro.autorias.some(
+                    autoria => autoria.nombre === row.nombre && autoria.apellido === row.apellido
+                )) {
+                    historial.registro.autorias.push({
+                        nombre: row.nombre,
+                        apellido: row.apellido
+                    });
+                }
+            }
+
+            if (row.idSeleccion !== null && !historial.selecciones.some(
+                seleccion => seleccion.id === row.idSeleccion
+            )) {
+                historial.selecciones.push({
+                    id: row.idSeleccion,
+                    primeraPagina: row.primeraPagina,
+                    ultimaPagina: row.ultimaPagina
                 });
             }
+        }
+
+        for (const historial of historiales) {
+            let paginasLeidas = 0;
+
+            if (historial.selecciones.length === 0) {
+                paginasLeidas = Math.min(
+                    historial.paginaActual || 0,
+                    historial.paginasTotales
+                );
+            } else {
+                historial.paginasTotales = 0;
+
+                for (const seleccion of historial.selecciones) {
+                    const paginasSeleccion = seleccion.ultimaPagina - seleccion.primeraPagina + 1;
+
+                    const paginasLeidasSeleccion = Math.max(
+                        0,
+                        Math.min(
+                            (historial.paginaActual || 0) - seleccion.primeraPagina + 1,
+                            paginasSeleccion
+                        )
+                    );
+
+                    historial.paginasTotales += paginasSeleccion;
+                    paginasLeidas += paginasLeidasSeleccion;
+                }
+            }
+
+            historial.porcentajeAvance = historial.paginasTotales > 0
+                ? Math.round(paginasLeidas / historial.paginasTotales * 100)
+                : 0;
+
+            delete historial.selecciones;
+            delete historial.paginasTotales;
         }
 
         return historiales;

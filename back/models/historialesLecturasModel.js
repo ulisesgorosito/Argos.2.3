@@ -1,20 +1,26 @@
 import pool from './bd.js';
 
-export async function getHistorialesLectura(idUsuario, fechaInicio, fechaFin) {
-
+export async function getHistorialesLectura(idUsuario, pagina = 1, limite = 10) {
     try {
-
         const query = `
             SELECT
                 hl.id,
                 hl.fechaInicio,
                 hl.fechaFin,
                 hl.idRegistro,
+                hl.paginaActual,
+                hl.leido,
+                hl.abandonado,
                 r.titulo,
                 r.subtitulo,
+                r.paginas,
                 r.fechaPublicacionOriginal,
                 a.nombre,
-                a.apellido
+                a.apellido,
+                sl.id AS idSeleccion,
+                sl.titulo AS tituloSeleccion,
+                sl.primeraPagina,
+                sl.ultimaPagina
             FROM cuervo_biblioteca.historiales_lectura hl
             INNER JOIN cuervo_biblioteca.registros r
                 ON r.id = hl.idRegistro
@@ -22,16 +28,20 @@ export async function getHistorialesLectura(idUsuario, fechaInicio, fechaFin) {
                 ON ra.idRegistro = r.id
             LEFT JOIN cuervo_biblioteca.autorias a
                 ON a.id = ra.idAutoria
+            LEFT JOIN cuervo_biblioteca.selecciones_lectura sl
+                ON sl.idHistorialLectura = hl.id
             WHERE hl.idUsuario = ?
+            ORDER BY hl.fechaInicio DESC
+            LIMIT ? OFFSET ?
         `;
 
-        const [rows] = await pool.query(query, [idUsuario]);
-        return rows;
+        const offset = (pagina - 1) * limite;
+        const [rows] = await pool.query(query, [idUsuario, limite, offset]);
 
+        return rows;
     } catch (error) {
         console.log(error);
     }
-
 }
 
 export async function getHistorialLecturaById(idHistorial, idUsuario) {
@@ -43,6 +53,8 @@ export async function getHistorialLecturaById(idHistorial, idUsuario) {
                 historiales_lectura.fechaFin,
                 historiales_lectura.idRegistro,
                 historiales_lectura.paginaActual,
+                historiales_lectura.leido,
+                historiales_lectura.abandonado,
                 selecciones_lectura.id AS idSeleccion,
                 selecciones_lectura.idHistorialLectura,
                 selecciones_lectura.titulo,

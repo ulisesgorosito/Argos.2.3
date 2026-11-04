@@ -8,7 +8,7 @@ import { extraerFecha } from "@/utils/dateUtil";
 const columns = [
     {
         key: "registro.titulo",
-        title: "Titulo"
+        title: "Título"
     },
     {
         key: "registro.autorias",
@@ -26,38 +26,33 @@ const columns = [
         key: "fechaFin",
         title: "Fecha fin",
         render: fechaFin => extraerFecha(fechaFin)
+    },
+    {
+        key: "porcentajeAvance",
+        title: "Avance",
+        render: porcentajeAvance => `${porcentajeAvance}%`
     }
 ];
 
 export default function HistorialesLecturaPage() {
-
     const [historiales, setHistoriales] = useState([]);
     const [historial, setHistorial] = useState(null);
     const [modalAbierto, setModalAbierto] = useState(false);
 
     const cargarHistoriales = async () => {
-
         try {
-
             const historiales = await obtener("/historiales");
-
             setHistoriales(historiales);
-
         } catch (error) {
-
             console.error(error);
-
         }
-
     };
 
     useEffect(() => {
-
         cargarHistoriales();
-
     }, []);
 
-    const handleNuevo = async () => {
+    const handleNuevo = () => {
         setHistorial(null);
         setModalAbierto(true);
     };
@@ -67,49 +62,31 @@ export default function HistorialesLecturaPage() {
     };
 
     const handleEditar = async (historial) => {
-
         await cargarHistorial(historial.id);
         setModalAbierto(true);
-
     };
 
     const handleEliminar = async (historial) => {
-
         try {
-
             await eliminar(`/historiales/${historial.id}`);
-
             await cargarHistoriales();
-
         } catch (error) {
-
             console.error(error);
-
         }
-
     };
 
-       const cargarHistorial = async (id) => {
-
+    const cargarHistorial = async (id) => {
         try {
-
             const historial = await obtener(`/historiales/${id}`);
-
             setHistorial(historial);
-
         } catch (error) {
-
             console.error(error);
-
         }
-
     };
 
     return (
         <div className="crud-page">
-
             <div className="page-header">
-
                 <h1>Historiales de lectura</h1>
 
                 <button
@@ -119,7 +96,6 @@ export default function HistorialesLecturaPage() {
                 >
                     Nuevo historial
                 </button>
-
             </div>
 
             <Tabla
@@ -136,7 +112,6 @@ export default function HistorialesLecturaPage() {
                     onSave={onSave}
                 />
             )}
-
         </div>
     );
 }
