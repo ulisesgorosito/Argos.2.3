@@ -1,7 +1,55 @@
 import pool from './bd.js';
 
-export async function getHistorialesLectura(idUsuario, pagina = 1, limite = 10) {
+export async function getHistorialesLectura(
+    idUsuario,
+    filtros,
+    pagina = 1,
+    limite = 10
+) {
     try {
+        const condiciones = ["hl.idUsuario = ?"];
+        const parametros = [idUsuario];
+
+        if (filtros.fechaDesde) {
+            condiciones.push("hl.fechaInicio >= ?");
+            parametros.push(filtros.fechaDesde);
+        }
+
+        if (filtros.fechaHasta) {
+            condiciones.push("hl.fechaInicio <= ?");
+            parametros.push(filtros.fechaHasta);
+        }
+
+        if (filtros.searchTerm) {
+            condiciones.push(`(
+                r.titulo LIKE ?
+                OR EXISTS (
+                    SELECT 1
+                    FROM cuervo_biblioteca.registros_autorias ra2
+                    INNER JOIN cuervo_biblioteca.autorias a2
+                        ON a2.id = ra2.idAutoria
+                    WHERE ra2.idRegistro = r.id
+                    AND CONCAT(a2.nombre, ' ', a2.apellido) LIKE ?
+                )
+            )`);
+
+            parametros.push(
+                `%${filtros.searchTerm}%`,
+                `%${filtros.searchTerm}%`
+            );
+        }
+
+        if (filtros.leidos !== null) {
+            condiciones.push("hl.leido = ?");
+            parametros.push(filtros.leidos);
+        }
+
+        if (filtros.abandonados !== null) {
+            condiciones.push("hl.abandonado = ?");
+            parametros.push(filtros.abandonados);
+        }
+        const where = condiciones.join(" AND ");
+
         const query = `
             SELECT
                 hl.id,
@@ -30,17 +78,36 @@ export async function getHistorialesLectura(idUsuario, pagina = 1, limite = 10) 
                 ON a.id = ra.idAutoria
             LEFT JOIN cuervo_biblioteca.selecciones_lectura sl
                 ON sl.idHistorialLectura = hl.id
-            WHERE hl.idUsuario = ?
+            WHERE ${where}
             ORDER BY hl.fechaInicio DESC
             LIMIT ? OFFSET ?
         `;
 
         const offset = (pagina - 1) * limite;
-        const [rows] = await pool.query(query, [idUsuario, limite, offset]);
 
-        return rows;
+        const [rows] = await pool.query(query, [
+            ...parametros,
+            limite,
+            offset
+        ]);
+
+        const [countRows] = await pool.query(`
+            SELECT COUNT(DISTINCT hl.id) AS total
+            FROM cuervo_biblioteca.historiales_lectura hl
+            INNER JOIN cuervo_biblioteca.registros r
+                ON r.id = hl.idRegistro
+            WHERE ${where}
+        `, parametros);
+
+        return {
+            rows,
+            total: countRows[0].total,
+            pagina,
+            limite
+        };
     } catch (error) {
         console.log(error);
+        throw error;
     }
 }
 

@@ -1,9 +1,32 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { Tabla } from "@/components/Tabla";
 import { obtener, eliminar } from "@/services/apiService";
 import HistorialLecturaModal from "@/components/historiales/HistorialLecturaModal";
+import HistorialLecturaFiltro from "@/components/historiales/HistorialLecturaFiltro";
 import { extraerFecha } from "@/utils/dateUtil";
+
+const hoy = new Date();
+const haceDosMeses = new Date();
+haceDosMeses.setMonth(haceDosMeses.getMonth() - 2);
+
+const obtenerFecha = fecha => {
+    const anio = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+
+    return `${anio}-${mes}-${dia}`;
+};
+
+const filtrosIniciales = {
+    leidos: null,
+    abandonados: null,
+    fechaDesde: obtenerFecha(haceDosMeses),
+    fechaHasta: obtenerFecha(hoy),
+    searchTerm: "",
+    idsTemas: []
+};
 
 const columns = [
     {
@@ -38,11 +61,23 @@ export default function HistorialesLecturaPage() {
     const [historiales, setHistoriales] = useState([]);
     const [historial, setHistorial] = useState(null);
     const [modalAbierto, setModalAbierto] = useState(false);
+    const [filtros, setFiltros] = useState(filtrosIniciales);
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
+    const [totalRegistros, setTotalRegistros] = useState(0);
 
     const cargarHistoriales = async () => {
         try {
-            const historiales = await obtener("/historiales");
-            setHistoriales(historiales);
+            const params = new URLSearchParams({
+                ...filtros,
+                pagina: paginaActual,
+                limite: registrosPorPagina
+            });
+
+            const response = await obtener(`/historiales?${params.toString()}`);
+
+            setHistoriales(response.historiales);
+            setTotalRegistros(response.total);
         } catch (error) {
             console.error(error);
         }
@@ -50,7 +85,14 @@ export default function HistorialesLecturaPage() {
 
     useEffect(() => {
         cargarHistoriales();
-    }, []);
+    }, [filtros, paginaActual, registrosPorPagina]);
+
+    const cambiarFiltros = filtros => {
+        setFiltros(filtros);
+        setPaginaActual(1);
+    };
+
+    const totalPaginas = Math.ceil(totalRegistros / registrosPorPagina);
 
     const handleNuevo = () => {
         setHistorial(null);
@@ -61,12 +103,12 @@ export default function HistorialesLecturaPage() {
         await cargarHistoriales();
     };
 
-    const handleEditar = async (historial) => {
+    const handleEditar = async historial => {
         await cargarHistorial(historial.id);
         setModalAbierto(true);
     };
 
-    const handleEliminar = async (historial) => {
+    const handleEliminar = async historial => {
         try {
             await eliminar(`/historiales/${historial.id}`);
             await cargarHistoriales();
@@ -75,7 +117,7 @@ export default function HistorialesLecturaPage() {
         }
     };
 
-    const cargarHistorial = async (id) => {
+    const cargarHistorial = async id => {
         try {
             const historial = await obtener(`/historiales/${id}`);
             setHistorial(historial);
@@ -98,12 +140,40 @@ export default function HistorialesLecturaPage() {
                 </button>
             </div>
 
+            <HistorialLecturaFiltro
+                filtros={filtros}
+                onChange={cambiarFiltros}
+            />
+
             <Tabla
                 data={historiales}
                 columns={columns}
                 onEdit={handleEditar}
                 onDelete={handleEliminar}
+                pagina={paginaActual}
+                totalPaginas={totalPaginas}
+                onPageChange={setPaginaActual}
             />
+
+            <div className="d-flex align-items-center gap-2 mt-3">
+                <span>Mostrar</span>
+
+                <select
+                    className="form-select"
+                    style={{ width: "auto" }}
+                    value={registrosPorPagina}
+                    onChange={event => {
+                        setRegistrosPorPagina(Number(event.target.value));
+                        setPaginaActual(1);
+                    }}
+                >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                </select>
+
+                <span>de {totalRegistros} registros</span>
+            </div>
 
             {modalAbierto && (
                 <HistorialLecturaModal

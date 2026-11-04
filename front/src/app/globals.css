@@ -1431,3 +1431,32 @@ body.dark-mode {
     color: #fff;
     background-color: #6c757d;
 }
+
+.toggle-switch {
+    width: 44px;
+    height: 24px;
+    padding: 3px;
+    border: none;
+    border-radius: 20px;
+    background: #adb5bd;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-switch span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.2s;
+}
+
+.toggle-switch.active {
+    background: #198754;
+}
+
+.toggle-switch.active span {
+    transform: translateX(20px);
+}

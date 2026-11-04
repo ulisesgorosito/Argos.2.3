@@ -1,4 +1,7 @@
-import { deleteHistorialById, getHistorialesLectura, getHistorialLecturaById, insertHistorial, updateHistorial } from "../models/historialesLecturasModel.js";
+import {
+    deleteHistorialById, getHistorialesLectura, getHistorialLecturaById,
+    insertHistorial, updateHistorial
+} from "../models/historialesLecturasModel.js";
 import { deleteSeleccion, insertSeleccion } from "../models/seleccionesModel.js";
 
 export async function nuevoHistorial(obj, idUsuario) {
@@ -22,14 +25,13 @@ export async function nuevoHistorial(obj, idUsuario) {
 
 export async function actualizarHistorial(obj, idHistorial, idUsuario) {
     try {
-        console.log(`Historial:  ${JSON.stringify(obj)}`)
-        console.log(`idHistorial:  ${idHistorial}`)
         const { selecciones, id, ...historial } = obj;
+        historial.fechaFin = historial.fechaFin || null;
         const rows = await updateHistorial(historial, idHistorial, idUsuario);
 
         await deleteSeleccion(idHistorial);
 
-        for (const seleccion of selecciones) {
+        for (const seleccion of selecciones || []) {
             seleccion.id = crypto.randomUUID();
             seleccion.idHistorialLectura = idHistorial;
             await insertSeleccion(seleccion);
@@ -42,11 +44,9 @@ export async function actualizarHistorial(obj, idHistorial, idUsuario) {
     }
 }
 
-export async function obtenerHistoriales(idUsuario, pagina) {
+export async function obtenerHistoriales(idUsuario, filtros, pagina, limite) {
     try {
-        const limite = 20;
-        const rows = await getHistorialesLectura(idUsuario, pagina, limite);
-
+        const { rows, total } = await getHistorialesLectura(idUsuario, filtros, pagina, limite);
         const historiales = [];
 
         for (const row of rows) {
@@ -59,6 +59,8 @@ export async function obtenerHistoriales(idUsuario, pagina) {
                     fechaFin: row.fechaFin,
                     idRegistro: row.idRegistro,
                     paginaActual: row.paginaActual,
+                    leido: row.leido,
+                    abandonado: row.abandonado,
                     porcentajeAvance: 0,
                     registro: {
                         titulo: row.titulo,
@@ -128,11 +130,21 @@ export async function obtenerHistoriales(idUsuario, pagina) {
                 ? Math.round(paginasLeidas / historial.paginasTotales * 100)
                 : 0;
 
+            if (historial.porcentajeAvance === 100 && !historial.leido) {
+                await updateHistorial({ leido: true }, historial.id, idUsuario);
+                historial.leido = true;
+            }
+
             delete historial.selecciones;
             delete historial.paginasTotales;
         }
 
-        return historiales;
+        return {
+            historiales,
+            total,
+            pagina,
+            limite
+        };
     } catch (error) {
         console.log(error);
         throw error;
@@ -154,6 +166,8 @@ export async function obtenerHistorial(idHistorial, idUsuario) {
             idRegistro: rows[0].idRegistro,
             paginaActual: rows[0].paginaActual,
             idUsuario: rows[0].idUsuario,
+            leido: rows[0].leido,
+            abandonado: rows[0].abandonado,
             selecciones: rows
                 .filter(row => row.idSeleccion !== null)
                 .map(row => ({

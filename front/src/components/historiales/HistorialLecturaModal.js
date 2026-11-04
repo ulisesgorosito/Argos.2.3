@@ -13,6 +13,8 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
     const [dropdownAbierto, setDropdownAbierto] = useState(false);
     const [cargandoRegistros, setCargandoRegistros] = useState(false);
     const [selecciones, setSelecciones] = useState([]);
+    const [leido, setLeido] = useState(false);
+    const [abandonado, setAbandonado] = useState(false);
 
     const dropdownRef = useRef(null);
 
@@ -49,6 +51,8 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
             setPaginaActual(historial.paginaActual ?? 1);
             setIdRegistro(historial.idRegistro ?? "");
             setSelecciones(historial.selecciones ?? []);
+            setLeido(historial.leido ?? false);
+            setAbandonado(historial.abandonado ?? false);
         } else {
             const hoy = new Date().toLocaleDateString("en-CA");
 
@@ -114,6 +118,8 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
             fechaFin,
             paginaActual: Number(paginaActual),
             idRegistro,
+            leido,
+            abandonado,
             selecciones
         };
 
@@ -245,6 +251,32 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                             onChange={(event) => setPaginaActual(event.target.value)}
                             required
                         />
+                    </div>
+
+                    <div className="d-flex gap-4 mb-3">
+                        <div className="d-flex align-items-center gap-2">
+                            <span>Leído</span>
+                            <button
+                                type="button"
+                                className={`toggle-switch ${leido ? "active" : ""}`}
+                                onClick={() => setLeido(!leido)}
+                                aria-pressed={leido}
+                            >
+                                <span />
+                            </button>
+                        </div>
+
+                        <div className="d-flex align-items-center gap-2">
+                            <span>Abandonado</span>
+                            <button
+                                type="button"
+                                className={`toggle-switch ${abandonado ? "active" : ""}`}
+                                onClick={() => setAbandonado(!abandonado)}
+                                aria-pressed={abandonado}
+                            >
+                                <span />
+                            </button>
+                        </div>
                     </div>
 
                     {selecciones.map((seleccion, index) => (
