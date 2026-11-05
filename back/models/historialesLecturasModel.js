@@ -42,11 +42,13 @@ export async function getHistorialesLectura(
         if (filtros.leidos !== null) {
             condiciones.push("hl.leido = ?");
             parametros.push(filtros.leidos);
+            console.log("leidos", filtros.leidos)
         }
 
         if (filtros.abandonados !== null) {
             condiciones.push("hl.abandonado = ?");
             parametros.push(filtros.abandonados);
+            console.log("abandonados", filtros.abandonados)
         }
         const where = condiciones.join(" AND ");
 
@@ -84,7 +86,7 @@ export async function getHistorialesLectura(
         `;
 
         const offset = (pagina - 1) * limite;
-
+        console.log("select historiales", query);
         const [rows] = await pool.query(query, [
             ...parametros,
             limite,

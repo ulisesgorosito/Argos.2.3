@@ -22,8 +22,8 @@ router.get('/', async (req, res, next) => {
         const filtros = {
             fechaDesde,
             fechaHasta,
-            leidos: leidos === "true",
-            abandonados: abandonados === "true",
+            leidos: leidos === "true" ? true : leidos === "false" ? false : null,
+            abandonados: abandonados === "true" ? true : abandonados === "false" ? false : null,
             searchTerm
         };
 
