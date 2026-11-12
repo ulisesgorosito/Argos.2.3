@@ -70,7 +70,8 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        await actualizarHistorial(req.body, req.params.id, idUsuario);
+        const actualizarSeccion = req.query.actualizarSeccion === 'true';
+        await actualizarHistorial(req.body, req.params.id, idUsuario, actualizarSeccion);
 
         res.json({ message: 'Historial actualizado correctamente' });
     } catch (error) {

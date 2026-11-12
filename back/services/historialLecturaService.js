@@ -23,19 +23,22 @@ export async function nuevoHistorial(obj, idUsuario) {
     }
 }
 
-export async function actualizarHistorial(obj, idHistorial, idUsuario) {
+export async function actualizarHistorial(obj, idHistorial, idUsuario, actualizarSeccion) {
     try {
         const { selecciones, id, ...historial } = obj;
         historial.fechaFin = historial.fechaFin || null;
         const rows = await updateHistorial(historial, idHistorial, idUsuario);
 
-        await deleteSeleccion(idHistorial);
+        if (actualizarSeccion) {
+            await deleteSeleccion(idHistorial);
 
-        for (const seleccion of selecciones || []) {
-            seleccion.id = crypto.randomUUID();
-            seleccion.idHistorialLectura = idHistorial;
-            await insertSeleccion(seleccion);
+            for (const seleccion of selecciones || []) {
+                seleccion.id = crypto.randomUUID();
+                seleccion.idHistorialLectura = idHistorial;
+                await insertSeleccion(seleccion);
+            }
         }
+
 
         return rows;
     } catch (error) {

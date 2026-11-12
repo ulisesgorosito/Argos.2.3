@@ -42,15 +42,16 @@ export async function getHistorialesLectura(
         if (filtros.leidos !== null) {
             condiciones.push("hl.leido = ?");
             parametros.push(filtros.leidos);
-            console.log("leidos", filtros.leidos)
         }
 
         if (filtros.abandonados !== null) {
             condiciones.push("hl.abandonado = ?");
             parametros.push(filtros.abandonados);
-            console.log("abandonados", filtros.abandonados)
         }
+
         const where = condiciones.join(" AND ");
+
+        const offset = (pagina - 1) * limite;
 
         const query = `
             SELECT
@@ -71,7 +72,15 @@ export async function getHistorialesLectura(
                 sl.titulo AS tituloSeleccion,
                 sl.primeraPagina,
                 sl.ultimaPagina
-            FROM cuervo_biblioteca.historiales_lectura hl
+            FROM (
+                SELECT hl.*
+                FROM cuervo_biblioteca.historiales_lectura hl
+                INNER JOIN cuervo_biblioteca.registros r
+                    ON r.id = hl.idRegistro
+                WHERE ${where}
+                ORDER BY hl.fechaInicio DESC
+                LIMIT ? OFFSET ?
+            ) hl
             INNER JOIN cuervo_biblioteca.registros r
                 ON r.id = hl.idRegistro
             LEFT JOIN cuervo_biblioteca.registros_autorias ra
@@ -80,13 +89,9 @@ export async function getHistorialesLectura(
                 ON a.id = ra.idAutoria
             LEFT JOIN cuervo_biblioteca.selecciones_lectura sl
                 ON sl.idHistorialLectura = hl.id
-            WHERE ${where}
             ORDER BY hl.fechaInicio DESC
-            LIMIT ? OFFSET ?
         `;
 
-        const offset = (pagina - 1) * limite;
-        console.log("select historiales", query);
         const [rows] = await pool.query(query, [
             ...parametros,
             limite,

@@ -89,11 +89,15 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
         };
     }, []);
 
-    const opcionesFiltradas = registros.filter(registro =>
-        registro.titulo
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-    );
+    const opcionesFiltradas = registros.filter(registro => {
+        const texto = searchTerm.toLowerCase().trim();
+
+        return (
+            registro.autorias?.toLowerCase().includes(texto) ||
+            registro.titulo?.toLowerCase().includes(texto) ||
+            registro.subtitulo?.toLowerCase().includes(texto)
+        );
+    });
 
     const agregarSeleccion = () => {
         const registro = registros.find(
@@ -124,7 +128,7 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
         };
 
         await guardarRequest(
-            `/historiales${historial ? `/${historial.id}` : ""}`,
+            `/historiales${historial ? `/${historial.id}?actualizarSeccion=true` : ""}`,
             data,
             historial ? "PUT" : "POST"
         );
@@ -212,7 +216,9 @@ export default function HistorialLecturaModal({ historial, onClose, onSave }) {
                                             }}
                                         >
                                             <div className="fw-semibold">
-                                                {registro.titulo}
+                                                {[registro.autorias, registro.titulo, registro.subtitulo]
+                                                    .filter(Boolean)
+                                                    .join(", ")}
                                             </div>
                                         </button>
                                     ))

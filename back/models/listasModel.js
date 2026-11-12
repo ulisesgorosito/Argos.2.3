@@ -7,12 +7,13 @@ export async function getListas(idUsuario) {
                 l.id,
                 l.nombre,
                 l.descripcion,
+                l.favorita,
                 COUNT(rl.id) AS cantidadRegistros
             FROM listas l
             LEFT JOIN registros_listas rl ON rl.idLista = l.id
             WHERE l.idUsuario = ?
             GROUP BY l.id
-            ORDER BY l.nombre
+            ORDER BY l.favorita DESC, l.nombre
         `;
 
         const [rows] = await pool.query(query, [idUsuario]);

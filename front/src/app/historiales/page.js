@@ -7,27 +7,6 @@ import HistorialLecturaModal from "@/components/historiales/HistorialLecturaModa
 import HistorialLecturaFiltro from "@/components/historiales/HistorialLecturaFiltro";
 import { extraerFecha } from "@/utils/dateUtil";
 
-const hoy = new Date();
-const haceDosMeses = new Date();
-haceDosMeses.setMonth(haceDosMeses.getMonth() - 2);
-
-const obtenerFecha = fecha => {
-    const anio = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
-    const dia = String(fecha.getDate()).padStart(2, "0");
-
-    return `${anio}-${mes}-${dia}`;
-};
-
-const filtrosIniciales = {
-    leidos: null,
-    abandonados: null,
-    fechaDesde: obtenerFecha(haceDosMeses),
-    fechaHasta: obtenerFecha(hoy),
-    searchTerm: "",
-    idsTemas: []
-};
-
 const columns = [
     {
         key: "registro.titulo",
@@ -53,7 +32,11 @@ const columns = [
     {
         key: "porcentajeAvance",
         title: "Avance",
-        render: porcentajeAvance => `${porcentajeAvance}%`
+        render: (porcentajeAvance, historial) => historial.leido
+            ? <i className="bi bi-check-lg text-success" />
+            : historial.abandonado
+                ? <i className="bi bi-x-lg text-danger" />
+                : `${porcentajeAvance}%`
     }
 ];
 
@@ -61,13 +44,22 @@ export default function HistorialesLecturaPage() {
     const [historiales, setHistoriales] = useState([]);
     const [historial, setHistorial] = useState(null);
     const [modalAbierto, setModalAbierto] = useState(false);
-    const [filtros, setFiltros] = useState(filtrosIniciales);
+    const [filtros, setFiltros] = useState({
+        leidos: null,
+        abandonados: null,
+        fechaDesde: "",
+        fechaHasta: "",
+        searchTerm: "",
+        idsTemas: []
+    });
     const [paginaActual, setPaginaActual] = useState(1);
     const [registrosPorPagina, setRegistrosPorPagina] = useState(10);
     const [totalRegistros, setTotalRegistros] = useState(0);
 
     const cargarHistoriales = async () => {
         try {
+            if (!filtros) return null;
+
             const params = new URLSearchParams({
                 ...filtros,
                 pagina: paginaActual,

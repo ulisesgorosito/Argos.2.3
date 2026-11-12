@@ -6,6 +6,25 @@ export default function HistorialLecturaFiltro({ filtros, onChange }) {
     const [dropdownAbierto, setDropdownAbierto] = useState(false);
     const dropdownRef = useRef(null);
 
+    const iniciarFiltros = () => {
+        const hoy = new Date();
+        const fechaDesde = new Date();
+        fechaDesde.setFullYear(fechaDesde.getFullYear() - 1);
+
+        onChange({
+            leidos: null,
+            abandonados: null,
+            fechaDesde: fechaDesde.toLocaleDateString("en-CA"),
+            fechaHasta: hoy.toLocaleDateString("en-CA"),
+            searchTerm: "",
+            idsTemas: []
+        });
+    };
+
+    useEffect(() => {
+        iniciarFiltros();
+    }, []);
+
     useEffect(() => {
         const handler = (event) => {
             if (
@@ -29,17 +48,7 @@ export default function HistorialLecturaFiltro({ filtros, onChange }) {
     };
 
     const limpiarFiltros = () => {
-        const hoy = new Date();
-        const haceDosMeses = new Date();
-        haceDosMeses.setMonth(haceDosMeses.getMonth() - 2);
-
-        onChange({
-            leidos: null,
-            abandonados: null,
-            fechaDesde: haceDosMeses.toLocaleDateString("en-CA"),
-            fechaHasta: hoy.toLocaleDateString("en-CA"),
-            searchTerm: ""
-        });
+        iniciarFiltros();
     };
 
     return (

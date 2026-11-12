@@ -39,7 +39,8 @@ export async function getRegistrosSimple(idUsuario) {
             left join registros_autorias ra ON ra.idRegistro = r.id
             left join autorias a ON a.id = ra.idAutoria
             WHERE r.idUsuario IS NULL
-            OR r.idUsuario = ?`;
+            OR r.idUsuario = ?
+            order by a.apellido`;
 
         const [rows] = await pool.query(query, [idUsuario]);
         return rows;

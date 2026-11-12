@@ -36,7 +36,7 @@ export default function Home() {
     const actualizarLectura = async (lectura, cambios) => {
         try {
             await guardarRequest(
-                `/historiales/${lectura.id}`,
+                `/historiales/${lectura.id}?actualizarSeccion=false`,
                 {
                     paginaActual: lectura.paginaActual,
                     ...cambios
@@ -49,7 +49,7 @@ export default function Home() {
             console.error(error);
         }
     };
-
+    
     const cambiarPagina = (lectura, paginaActual) => {
         setLecturas(lecturas.map(item =>
             item.id === lectura.id

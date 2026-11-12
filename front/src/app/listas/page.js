@@ -76,15 +76,15 @@ export default function ListasPage() {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const opcionesFiltradas = useMemo(() => {
-        const texto = searchTerm.trim().toLowerCase();
+    const opcionesFiltradas = registrosDropdown.filter(opcion => {
+        const texto = searchTerm.toLowerCase().trim();
 
-        return registrosDropdown.filter(opcion =>
+        return (
             opcion.titulo?.toLowerCase().includes(texto) ||
+            opcion.subtitulo?.toLowerCase().includes(texto) ||
             opcion.autorias?.toLowerCase().includes(texto)
         );
-    }, [searchTerm, registrosDropdown]);
-
+    });
     const handleNuevaLista = () => {
         setModalAbierto(true);
         setLista(null);
@@ -186,6 +186,16 @@ export default function ListasPage() {
         setHayCambios(true);
     };
 
+    const handleToggleFavorita = async (element) => {
+        await guardarRequest(
+            `/listas/${element.id}`,
+            { favorita: !element.favorita },
+            "PUT"
+        );
+
+        await cargarListas();
+    };
+
     return (
         <div className="row">
             <div className="col-md-4">
@@ -224,6 +234,10 @@ export default function ListasPage() {
                                             {element.descripcion}
                                         </div>
                                     )}
+
+                                    <div className="small text-muted">
+                                        {element.cantidadRegistros} registros
+                                    </div>
                                 </div>
 
                                 <div
@@ -232,6 +246,13 @@ export default function ListasPage() {
                                         event.stopPropagation()
                                     }
                                 >
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-warning"
+                                        onClick={() => handleToggleFavorita(element)}
+                                    >
+                                        <i className={`bi ${element.favorita ? "bi-star-fill" : "bi-star"}`}></i>
+                                    </button>
                                     <button
                                         type="button"
                                         className="btn btn-sm btn-outline-secondary"
@@ -341,9 +362,10 @@ export default function ListasPage() {
                                                         )
                                                     }
                                                 >
-                                                    <div className="fw-semibold">
-                                                        {opcion.autorias}, {opcion.titulo}
-                                                    </div>
+                                                    <div className="fw-semibold">{opcion.autorias}, {opcion.titulo}</div>
+                                                    {opcion.subtitulo && (
+                                                        <div className="small text-muted">{opcion.subtitulo}</div>
+                                                    )}
                                                 </button>
                                             )
                                         )
