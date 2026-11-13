@@ -1,12 +1,49 @@
 import pool from './bd.js';
 
-export async function getTemas(idUsuario) {
+export async function getTemas(idUsuario, searchTerm = "", pagina = 1, limite = 20) {
     try {
-        const query = "SELECT * FROM temas WHERE idUsuario = ?";
-        const [rows] = await pool.query(query, [idUsuario]);
+        const query = `
+            SELECT *
+            FROM temas
+            WHERE idUsuario = ?
+              AND nombre LIKE ?
+            ORDER BY nombre
+            LIMIT ? OFFSET ?
+        `;
+
+        const offset = (pagina - 1) * limite;
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            `%${searchTerm}%`,
+            limite,
+            offset
+        ]);
+
         return rows;
     } catch (error) {
         console.log(error);
+        throw error;
+    }
+}
+
+export async function countTemas(idUsuario, searchTerm = "") {
+    try {
+        const query = `
+            SELECT COUNT(*) AS total
+            FROM temas
+            WHERE idUsuario = ?
+              AND nombre LIKE ?
+        `;
+
+        const [rows] = await pool.query(query, [
+            idUsuario,
+            `%${searchTerm ?? ""}%`
+        ]);
+
+        return rows[0].total;
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }
 

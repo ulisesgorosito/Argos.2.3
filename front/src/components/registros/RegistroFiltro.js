@@ -15,7 +15,7 @@ export default function RegistroFiltro({ filtros, onChange }) {
         async function cargarTodo() {
             try {
                 const [temas, tiposRegistros, listas] = await Promise.all([
-                    obtener("/temas"),
+                    obtener("/dropdown/temas"),
                     obtener("/tiposRegistro"),
                     obtener("/listas")
                 ]);

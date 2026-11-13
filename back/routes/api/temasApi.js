@@ -7,14 +7,26 @@ const {
     getTemaById,
     updateTema
 } = require('../../models/temasModels');
+const { obtenerTemas } = require('../../services/temaService');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const temas = await getTemas(idUsuario);
-        res.json(temas);
+
+        const {
+            searchTerm = "",
+            pagina = 1,
+        } = req.query;
+
+        const response = await obtenerTemas(
+            idUsuario,
+            searchTerm,
+            Number(pagina),
+        );
+
+        res.json(response);
     } catch (error) {
         next(error);
     }

@@ -18,12 +18,21 @@ const columns = [
 export default function TemasPage() {
     const [temas, setTemas] = useState([]);
     const [tema, setTema] = useState(null);
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [pagina, setPagina] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
     const [modalAbierto, setModalAbierto] = useState(false);
 
     const cargarTemas = async () => {
         try {
-            const temas = await obtener("/temas");
-            setTemas(temas);
+            const parametros = new URLSearchParams({
+                searchTerm,
+                pagina: String(pagina)
+            });
+            const response = await obtener(`/temas?${parametros}`);
+            setTemas(response.temas);
+            setTotalPaginas(response.totalPaginas);
         } catch (error) {
             console.error(error);
         }
@@ -31,7 +40,12 @@ export default function TemasPage() {
 
     useEffect(() => {
         cargarTemas();
-    }, []);
+    }, [searchTerm, pagina]);
+
+    useEffect(() => {
+        setPagina(1);
+    }, [searchTerm]);
+
 
     const handleNuevo = async () => {
         setTema(null);
@@ -70,11 +84,22 @@ export default function TemasPage() {
                 </button>
             </div>
 
+            <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
             <Tabla
                 data={temas}
                 columns={columns}
                 onEdit={handleEditar}
                 onDelete={handleEliminar}
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onPageChange={setPagina}
             />
 
             {modalAbierto && (
