@@ -230,9 +230,17 @@ export default function ListasPage() {
                                     </div>
 
                                     {element.descripcion && (
-                                        <div className="small">
-                                            {element.descripcion}
-                                        </div>
+                                        <details
+                                            className="small mt-1"
+                                            onClick={(event) => event.stopPropagation()}
+                                        >
+                                            <summary style={{ cursor: "pointer" }}>
+                                                Ver descripción
+                                            </summary>
+                                            <div className="mt-1">
+                                                {element.descripcion}
+                                            </div>
+                                        </details>
                                     )}
 
                                     <div className="small text-muted">
