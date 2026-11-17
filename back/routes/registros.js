@@ -10,7 +10,6 @@ router.get('/', async function (req, res, next) {
     try {
         const idUsuario = req.session.id_usuario;
         var registros = await obtenerRegistros(idUsuario);
-        console.log("registros", registros)
         res.render('registros/registros', {
             layout: 'layout',
             registros: registros

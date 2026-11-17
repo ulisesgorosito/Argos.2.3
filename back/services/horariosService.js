@@ -25,7 +25,6 @@ export async function actualizarHorario(obj, idHorario, idUsuario) {
 export async function borrarHorario(idHorario, idUsuario) {
     try {
         const rows = await deleteHorarioById(idHorario, idUsuario);
-        console.log("Horario eliminado:", rows);
         return rows;
     } catch (error) {
         console.log(error);

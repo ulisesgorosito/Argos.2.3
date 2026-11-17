@@ -152,8 +152,6 @@ export default function ListasPage() {
             idRegistroLista: registro.idRegistroLista
         }));
 
-        console.log("payload", payload);
-
         await guardarRequest(
             `/listas/${lista.id}/registros`,
             payload,

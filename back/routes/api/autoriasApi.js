@@ -51,7 +51,6 @@ router.post('/', async function (req, res, next) {
 
 router.put('/:id', async function (req, res, next) {
     try {
-        console.log("ENTRO AL PUT AUTORIAS");
         const obj = req.body;
 
         if (obj.fecha_nacimiento === '')
@@ -75,7 +74,6 @@ router.put('/:id', async function (req, res, next) {
 
 router.delete('/:id', async function (req, res, next) {
     try {
-        console.log("ENTRO AL DELETE AUTORIAS");
         const id = req.params.id;
 
         const result = await deleteAutoriaById(id);

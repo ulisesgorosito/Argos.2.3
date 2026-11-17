@@ -97,7 +97,6 @@ export async function actualizarActividad(obj, idActividad, idUsuario) {
 export async function borrarActividad(idActividad, idUsuario) {
     try {
         const rows = await deleteActividadById(idActividad, idUsuario);
-        console.log("Actividad eliminada:", rows);
         return rows;
     } catch (error) {
         console.log(error);

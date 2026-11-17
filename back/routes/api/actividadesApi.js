@@ -21,7 +21,6 @@ router.post('/', async (req, res, next) => {
 
         const idUsuario = req.session.id_usuario;
         const response = await nuevaActividad(req.body, idUsuario);
-        console.log("RESPONSE POST ACTIVIDAD", response)
         res.status(201).json(response);
     }
     catch (error) {

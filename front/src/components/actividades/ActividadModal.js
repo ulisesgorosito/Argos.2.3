@@ -90,7 +90,6 @@ export default function ActividadModal({ actividad, onClose, onSave }) {
                 payload,
                 actividad ? "PUT" : "POST"
             );
-            console.log("RESPUESTA DE POST FRONT", response)
             const idActividad = actividad?.id || response;
 
             if (!idActividad) {

@@ -15,7 +15,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:id/registros', async (req, res, next) => {
     try {
-        console.log("llego a la api")
         const idUsuario = req.session.id_usuario;
         const response = await obtenerRegistrosDeLista(req.params.id, idUsuario);
         console.dir(response, { depth: null });
@@ -49,7 +48,6 @@ router.put('/:id', async (req, res, next) => {
 
 router.post('/:id/registros', async (req, res, next) => {
     try {
-        console.log("llego al post de registros")
         const idUsuario = req.session.id_usuario;
         await actualizarRegistrosLista(req.params.id, req.body, idUsuario);
 

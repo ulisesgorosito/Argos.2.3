@@ -47,7 +47,6 @@ export async function actualizarRegistro(obj, idRegistro, idUsuario) {
     try {
         const { idsAutoria, idsTema, idsListaLectura, ...registroData } = obj;
 
-        console.log(`Registro:  ${JSON.stringify(registroData)}`)
         const rows = await updateRegistro(registroData, idRegistro, idUsuario);
 
         await deleteRegistroAutorias(idRegistro);
@@ -188,7 +187,6 @@ export async function obtenerRegistrosDropdown(idUsuario) {
 export async function obtenerRegistro(idRegistro, idUsuario) {
     const rows = await getRegistroById(idRegistro, idUsuario);
 
-    console.log("registro por id", rows)
     if (rows.length === 0) {
         return null;
     }

@@ -24,7 +24,6 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 
 app.use(function (req, res, next) {
-  console.log('REQUEST:', req.method, req.url);
   next();
 });
 

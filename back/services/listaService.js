@@ -86,7 +86,6 @@ export async function actualizarRegistrosLista(idLista, idsRegistros, idUsuario)
             idsRegistros,
             idUsuario
         );
-        console.log("response", rows)
         return rows;
     } catch (error) {
         console.log(error);

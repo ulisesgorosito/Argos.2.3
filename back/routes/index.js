@@ -5,8 +5,6 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function (req, res, next) {
 
-    console.log('INDEX SESSION:', req.session);
-
     if (req.session.id_usuario) {
         return res.render('index', {
             layout: 'layout',

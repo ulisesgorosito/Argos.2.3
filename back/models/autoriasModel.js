@@ -81,7 +81,6 @@ export async function getAutoriaById(idAutoria, idUsuario) {
 export async function insertAutoria(obj, idUsuario) {
     try {
         obj.idUsuario = idUsuario;
-        console.log("obj en insertAutoria:", obj);
         var query = "insert into autorias set ?"
         var [rows] = await pool.query(query, [obj])
         return rows;
@@ -95,8 +94,6 @@ export async function insertAutoria(obj, idUsuario) {
 export async function updateAutoria(obj, idAutoria, idUsuario) {
     try {
         var query = "UPDATE autorias SET ? WHERE id = ? AND idUsuario = ?";
-        console.log(idUsuario);
-        console.log(obj);
         var [rows] = await pool.query(query, [obj, idAutoria, idUsuario]);
         return rows;
     } catch (error) {

@@ -89,7 +89,6 @@ export async function getRegistrosDeLista(idLista, idUsuario) {
         `;
 
         const [rows] = await pool.query(query, [idLista, idUsuario]);
-        console.log("registros de la lista", rows)
         return rows;
     } catch (error) {
         console.log(error);
@@ -128,7 +127,6 @@ export async function insertLista(obj, idUsuario) {
 
 export async function updateLista(obj, idLista, idUsuario) {
     try {
-        console.log("actualizar lista", obj, idLista, idUsuario)
         var query = "UPDATE listas SET ? WHERE id = ? AND idUsuario = ?";
         var [rows] = await pool.query(query, [obj, idLista, idUsuario]);
         return rows;
