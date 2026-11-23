@@ -68,8 +68,45 @@ export async function getRegistrosDeListasDashboard(idUsuario) {
     }
 }
 
-export async function getRegistrosDeLista(idLista, idUsuario) {
+export async function getRegistrosDeLista(idLista, idUsuario, searchTerm = "", idsTemas = []) {
     try {
+        let condiciones = `
+            WHERE rl.idLista = ?
+            AND l.idUsuario = ?
+        `;
+
+        const parametros = [idLista, idUsuario];
+
+        if (searchTerm.trim()) {
+            condiciones += `
+                AND (
+                    r.titulo LIKE ?
+                    OR EXISTS (
+                        SELECT 1
+                        FROM registros_autorias ra2
+                        INNER JOIN autorias a2 ON a2.id = ra2.idAutoria
+                        WHERE ra2.idRegistro = r.id
+                        AND a2.apellido LIKE ?
+                    )
+                )
+            `;
+
+            parametros.push(`%${searchTerm.trim()}%`, `%${searchTerm.trim()}%`);
+        }
+
+        if (idsTemas.length > 0) {
+            condiciones += `
+                AND EXISTS (
+                    SELECT 1
+                    FROM registros_temas rt
+                    WHERE rt.idRegistro = r.id
+                    AND rt.idTema IN (${idsTemas.map(() => "?").join(",")})
+                )
+            `;
+
+            parametros.push(...idsTemas);
+        }
+
         const query = `
             SELECT
                 rl.id AS idRegistroLista,
@@ -83,12 +120,12 @@ export async function getRegistrosDeLista(idLista, idUsuario) {
             INNER JOIN listas l ON rl.idLista = l.id
             LEFT JOIN registros_autorias ra ON ra.idRegistro = r.id
             LEFT JOIN autorias a ON a.id = ra.idAutoria
-            WHERE rl.idLista  = ?
-            AND l.idUsuario = ?
+            ${condiciones}
             ORDER BY rl.orderInt
         `;
 
-        const [rows] = await pool.query(query, [idLista, idUsuario]);
+        const [rows] = await pool.query(query, parametros);
+
         return rows;
     } catch (error) {
         console.log(error);

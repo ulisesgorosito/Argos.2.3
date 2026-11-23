@@ -49,7 +49,7 @@ export default function Home() {
             console.error(error);
         }
     };
-    
+
     const cambiarPagina = (lectura, paginaActual) => {
         setLecturas(lecturas.map(item =>
             item.id === lectura.id
@@ -110,11 +110,12 @@ export default function Home() {
                 )}
             </section>
 
+
             <section className="mb-5">
                 <h2>Lecturas actuales</h2>
 
                 {lecturas.length === 0 ? (
-                    <p>No tenés lecturas en curso.</p>
+                    <p className="text-muted">No tenés lecturas en curso.</p>
                 ) : (
                     <div className="row g-2">
                         {lecturas.map(lectura => (
@@ -138,7 +139,7 @@ export default function Home() {
                                                     style={{ width: `${lectura.porcentajeAvance}%` }}
                                                 />
                                             </div>
-                                            <small>{lectura.porcentajeAvance}%</small>
+                                            <small className="text-muted">{lectura.porcentajeAvance}%</small>
                                         </div>
 
                                         <div className="d-flex align-items-center gap-2">
@@ -176,14 +177,16 @@ export default function Home() {
                                                 className="btn btn-sm btn-success"
                                                 onClick={() => actualizarLectura(lectura, { leido: true })}
                                             >
-                                                Leído
+                                                <i className="bi bi-check-lg me-1" />
+                                                Finalizar
                                             </button>
 
                                             <button
                                                 type="button"
-                                                className="btn btn-sm btn-outline-danger"
+                                                className="btn btn-sm btn-outline-secondary"
                                                 onClick={() => actualizarLectura(lectura, { abandonado: true })}
                                             >
+                                                <i className="bi bi-x-lg me-1" />
                                                 Abandonar
                                             </button>
                                         </div>
@@ -194,6 +197,7 @@ export default function Home() {
                     </div>
                 )}
             </section>
+
 
             <section>
                 <h2>Mis listas de lectura</h2>

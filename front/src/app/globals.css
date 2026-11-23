@@ -1432,6 +1432,10 @@ body.dark-mode {
     background-color: #6c757d;
 }
 
+.dark-mode .text-muted {
+    color: #8888a8 !important;
+}
+
 .toggle-switch {
     width: 44px;
     height: 24px;

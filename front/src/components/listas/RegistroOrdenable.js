@@ -37,7 +37,9 @@ export default function RegistroOrdenable({
                     </span>
 
                     <span className="fw-semibold">
-                       {registro.autorias}, {registro.titulo}
+                        <span className="fw-semibold">
+                            {registro.autorias}, {registro.titulo}
+                        </span>
                     </span>
                 </div>
 

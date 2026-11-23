@@ -1,4 +1,4 @@
-import { deleteLista, getListas,getListasDropdown,getRegistrosDeLista, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
+import { deleteLista, getListas, getListasDropdown, getRegistrosDeLista, insertLista, sincronizarRegistrosLista, updateLista } from "../models/listasModel.js";
 
 export async function nuevaLista(obj, idUsuario) {
     try {
@@ -30,11 +30,16 @@ export async function obtenerListas(idUsuario) {
     }
 }
 
-export async function obtenerRegistrosDeLista(idLista, idUsuario) {
+export async function obtenerRegistrosDeLista(idLista, idUsuario, searchTerm, idsTemas) {
     try {
-        const rows = await getRegistrosDeLista(idLista, idUsuario);
+        const rows = await getRegistrosDeLista(
+            idLista,
+            idUsuario,
+            searchTerm,
+            idsTemas
+        );
 
-        return Object.values(
+        const registros = Object.values(
             rows.reduce((registrosAgrupados, registro) => {
                 if (!registrosAgrupados[registro.idRegistro]) {
                     registrosAgrupados[registro.idRegistro] = {
@@ -63,6 +68,8 @@ export async function obtenerRegistrosDeLista(idLista, idUsuario) {
             ...registro,
             autorias: registro.autorias.join(", ")
         }));
+
+        return registros;
     } catch (error) {
         console.log(error);
         throw error;

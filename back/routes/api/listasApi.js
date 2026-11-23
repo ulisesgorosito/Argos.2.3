@@ -16,8 +16,15 @@ router.get('/', async (req, res, next) => {
 router.get('/:id/registros', async (req, res, next) => {
     try {
         const idUsuario = req.session.id_usuario;
-        const response = await obtenerRegistrosDeLista(req.params.id, idUsuario);
-        console.dir(response, { depth: null });
+        const { searchTerm = "", idsTemas = "" } = req.query;
+
+        const response = await obtenerRegistrosDeLista(
+            req.params.id,
+            idUsuario,
+            searchTerm,
+            idsTemas ? idsTemas.split(",") : [],
+        );
+
         res.json(response);
     } catch (error) {
         next(error);
